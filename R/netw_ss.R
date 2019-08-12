@@ -8,17 +8,18 @@ netw_ss <- function(g){
 
   n_nodes <- gorder(g)
   n_edges <- edge_density(g)
-  n_twostar <- degree_dist[2]
-  n_threestar <- degree_dist[3]
+  n_twostar <- degree_dist[3]
+  n_threestar <- degree_dist[4]
   n_triangles <- length(triangles(g))/3 / n_nodes
+  poisson_est <- as.numeric(MASS::fitdistr(degree_dist * n_nodes, "poisson")$estimate)
 
-  output <- c(n_edges, n_twostar, n_threestar, n_triangles)
+  output <- c(edges = n_edges, twostar = n_twostar, threestar = n_threestar, triangles = n_triangles, poisson_est = poisson_est)
 
   return(output)
 }
 
 #' @export
-netw_ss_sim <- function(n, param, type = "gnp"){
+netw_ss_sim <- function(param, n, type = "gnp"){
 
   if(type == "gnp"){
     graph <- igraph::sample_gnp(n = n, p = param, directed = FALSE, loops = FALSE)
@@ -29,9 +30,14 @@ netw_ss_sim <- function(n, param, type = "gnp"){
   }
 
   if(type == "sbm"){
-    pref.matrix <- cbind( param, rev(param))
+    pref.matrix <- cbind(c(param, 1e-3), c(1e-3, param))
     graph <- sample_sbm(n = n, pref.matrix = pref.matrix, block.sizes = c(n/2, n/2))
   }
+
+  if(type == "smallworld"){
+    graph <- sample_smallworld(dim = 1, size = n, nei = 5, p = param)
+  }
+
 
   output <- netw_ss(graph)
 

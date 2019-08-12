@@ -1,28 +1,37 @@
 
 library(igraph)
+library(dplyr)
 
 n <- 1000
+ni <- 1000
 
-# Erdos - Renyi
+# Erdos - Renyi "gnp"
 
-p <- 0.01
+p <- runif(ni, min = 1e-3, 1e-2)
+gnp_df <- cbind(p, t(sapply(p, netw_ss_sim, n = n))) %>% as.data.frame()
+gnp_lm <- lm(formula = p ~ edges + twostar + threestar + triangles + poisson_est, data = gnp_df)
+summary(gnp_lm)
 
-er <- igraph::sample_gnp(n = n, p = p, directed = FALSE, loops = FALSE)
-netw_ss(er)
+# Barabasi - Albert "pa"
 
-# Barabasi - Albert
+power <- runif(ni, min = 0.8, 1.2)
+pa_df <- cbind(power, t(sapply(power, netw_ss_sim, n = n, type = "pa"))) %>% as.data.frame()
+pa_lm <- lm(formula = power ~ edges + twostar + threestar + triangles + poisson_est, data = pa_df)
+summary(pa_lm)
 
-ba <- sample_pa(n = n, directed = FALSE, zero.appeal = 1e-3)
-netw_ss(ba)
+# Stochastic block model "sbm"
 
-# Stochastic block model
+block_p <- 10^runif(ni, -2.5, -2)
+sbm_df <- cbind(block_p, t(sapply(block_p, netw_ss_sim, n = n, type = "sbm"))) %>% as.data.frame()
+sbm_lm <- lm(formula = block_p ~ edges + twostar + threestar + triangles + poisson_est, data = sbm_df)
+summary(sbm_lm)
 
-pref.matrix <- cbind( c(.01, .001), c(.001, .01) )
-sbm <- sample_sbm(n = n, pref.matrix = pref.matrix, block.sizes = c(n/2, n/2))
-netw_ss(sbm)
+# Small world network
 
-
-
+p <- 10^runif(ni, -2, -1)
+smallworld_df <- cbind(p, t(sapply(p, netw_ss_sim, n = n, type = "smallworld"))) %>% as.data.frame()
+smallworld_lm <- lm(formula = p ~ edges + twostar + threestar + triangles + poisson_est, data = smallworld_df)
+summary(smallworld_lm)
 
 
 
