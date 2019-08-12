@@ -120,3 +120,25 @@ forceNetwork(Links = edges_d3, Nodes = nodes_d3, Source = "from", Target = "to",
 
 sankeyNetwork(Links = edges_d3, Nodes = nodes_d3, Source = "from", Target = "to",
               NodeID = "label", Value = "weight", fontSize = 16, unit = "Letter(s)")
+
+
+## Stochastic block model ---------------
+
+pm <- cbind( c(.4, .01), c(.01, .4) )
+g <- sample_sbm(50, pref.matrix=pm, block.sizes=c(15,35))
+g
+plot(g, layout = layout_with_graphopt)
+
+### Heteronormative SBM -----------
+
+pm <- cbind( c(.01, .4), c(.4, .01) )
+g <- sample_sbm(20, pref.matrix=pm, block.sizes=c(10,10))
+g
+plot(g, layout = layout_with_graphopt)
+
+### SBM more
+
+pm <- (0.3 - 1e-2) * diag(3) + 1e-2
+g <- sample_sbm(60, pref.matrix=pm, block.sizes=c(20,20,20))
+g
+plot(g, layout = layout_with_graphopt)
