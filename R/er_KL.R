@@ -1,13 +1,10 @@
 
 #' @export
 er_KL <- function(p, nl = 10, pl = 0.1){
-  g <- sapply(rep(nl, 10), igraph::sample_gnp, p = p, directed = FALSE, loops = FALSE)
 
-  y <- igraph::gsize(g)
+  y <- mean(replicate(50, er_edges(nl, p)))
 
-  KL_div <- - nl - log(1 - pl) - log(pl/(1-pl)) * y -
-    log(factorial(nl)/(factorial(y) * factorial(nl - y))) +
-    0.5 * log2(2*pi*exp(1)*nl*p*(1-p))
+  KL_div <- KL_calc(nl, pl, y, p)
 
   if(is.nan(KL_div)){print(y)}
 
@@ -16,9 +13,11 @@ er_KL <- function(p, nl = 10, pl = 0.1){
 
 KL_calc <- function(nl, pl, y, p){
 
-  output <- - nl - log(1 - pl) - log(pl/(1-pl)) * y -
-    log(factorial(nl)/(factorial(y) * factorial(nl - y))) +
-    0.5 * log2(2*pi*exp(1)*nl*p*(1-p))
+  ne <- factorial(nl) / (2 * factorial(nl - 2))
+
+  output <- - ne * log(1 - pl) - log(pl/(1-pl)) * y -
+    log(factorial(ne)/(factorial(y) * factorial(ne - y))) +
+    0.5 * log(2*pi*exp(1)*nl*p*(1-p))
 
   return(output)
 

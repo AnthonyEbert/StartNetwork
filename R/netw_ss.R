@@ -19,14 +19,16 @@ netw_ss <- function(g){
 }
 
 #' @export
-netw_ss_sim <- function(param, n, type = "gnp"){
+netw_ss_sim <- function(param, n, type = "gnp", corr = 0.9){
 
   if(type == "gnp"){
-    graph <- igraph::sample_gnp(n = n, p = param, directed = FALSE, loops = FALSE)
+    graph <- igraph::sample_gnp(n = n, p = param, directed = FALSE, loops = FALSE) %>%
+      sample_correlated_gnp(corr = corr)
   }
 
   if(type == "pa"){
-    graph <- igraph::sample_pa(n = n, power = param, directed = FALSE)
+    graph <- igraph::sample_pa(n = n, power = param, directed = FALSE) %>%
+      sample_correlated_gnp(corr = corr)
   }
 
   if(type == "sbm"){
@@ -43,3 +45,15 @@ netw_ss_sim <- function(param, n, type = "gnp"){
 
   return(output)
 }
+
+#' @export
+er_edges <- function(n, p, ...){
+  g <- igraph::sample_gnp(n, p, ...)
+
+  output <- igraph::gsize(g)
+
+  return(output)
+}
+
+
+
