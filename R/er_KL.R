@@ -1,23 +1,26 @@
 
 #' @export
-er_KL <- function(p, nl = 10, pl = 0.1){
+er_KL <- function(p, nl = 10, pl = 0.1, replicates = 1000, ...){
 
-  y <- mean(replicate(50, er_edges(nl, p)))
+  ne <- choose(nl,2)
 
-  KL_div <- KL_calc(nl, pl, y, p)
+  y <- replicate(replicates, er_edges(nl, p, ...))
+  y1 <- mean(y)
+  y2 <- mean(log(choose(ne, y)))
+  entropy <- mean(-log(dbinom(y, size = ne, p)))
+
+  KL_div <- KL_calc(nl, pl, y1, y2, ne, entropy)
 
   if(is.nan(KL_div)){print(y)}
 
   return(KL_div)
 }
 
-KL_calc <- function(nl, pl, y, p){
+KL_calc <- function(nl, pl, y1, y2, ne, entropy){
 
-  ne <- factorial(nl) / (2 * factorial(nl - 2))
-
-  output <- - ne * log(1 - pl) - log(pl/(1-pl)) * y -
-    log(factorial(ne)/(factorial(y) * factorial(ne - y))) +
-    0.5 * log(2*pi*exp(1)*nl*p*(1-p))
+  output <- - ne * log(1 - pl) - log(pl/(1-pl)) * y1 -
+    y2 -
+    entropy
 
   return(output)
 
