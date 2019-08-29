@@ -3,6 +3,7 @@
 export(ba_KL)
 export(ba_lik)
 export(ba_lik2)
+export(degree_dist_standardised)
 export(degree_pa_sampler)
 export(entropy_calc)
 export(entropy_calc_matrix)

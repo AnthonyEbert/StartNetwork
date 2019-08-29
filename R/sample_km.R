@@ -1,30 +1,28 @@
 
 #' @export
-sample_km <- function(g, pf = 0.5, ps = 0.5, T1 = 2){
+sample_km <- function(g, pf = 0.01, ps = 0.005, dm = 10){
 
   n <- gorder(g)
+  sexes <- vertex_attr(g, "sexes")
+  males <- which(sexes == "male")
+  females <- which(sexes == "female")
 
-  if("phi" %in% vertex_attr_names(g)){
-    phi <- vertex_attr(g, "phi")
-  } else {
-    phi <- rep(1, n)
-  }
-
+  T1 <- n/2 - ecount(g)
 
   for(t in 1:T1){
     if(rbinom(1, size = 1, prob = pf) == 1){
       condition <- TRUE
       while(condition){
-        nodes <- sample.int(n, 2)
-        condition <- are.connected(g, nodes[1], nodes[2])
+        male <- sample(males, 1)
+        female <- sample(females, 1)
+        condition <- !(!are.connected(g, male, female) &
+          all(degree(g)[c(male, female)] < dm))
       }
-      if(rbinom(1, 1, prob = phi[nodes[1]]) == 1){
-        g <-add_edges(g, nodes)
-      }
+      g <-add_edges(g, c(male, female))
     }
+  }
     number_edges_to_remove <- rbinom(1, ecount(g), prob = ps)
     g <- delete_edges(g, sample.int(n = ecount(g), number_edges_to_remove))
-  }
 
   return(g)
 }
