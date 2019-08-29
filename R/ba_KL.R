@@ -1,18 +1,12 @@
 
 #' @export
-ba_KL <- function(m, nl = 50, ml = 3, replicates = 1000, entropy_cheat = FALSE, entropy_return = FALSE, ...){
+ba_KL <- function(m, nl = 10000, ml = 3, replicates = 1000, samples = 100, entropy_cheat = FALSE, entropy_return = FALSE, ...){
 
   g <- igraph::graph(edges = c(1, 2, 1, 3), directed = FALSE)
 
-  y <- t(sapply(rep(nl, replicates), FUN = degree_pa_sampler, m = m, g = g))
-  y <- t(apply(y, 1, sort))
-
-  #log_lik <- mean( apply(y, 1, ba_lik2, p = pl) )
-
-
-  log_lik <- mean(log(apply(y, 1, ba_lik, m = ml)))
-
-  entropy <- entropy_calc_matrix(y)
+  y <- sample(degree_pa_sampler(nl, m, g), samples)
+  log_lik <- log(ba_lik(y, m = ml))
+  entropy <- entropy_calc(y)
 
   return(-log_lik - entropy)
 }
@@ -33,7 +27,7 @@ degree_pa_sampler <- function(nl, m, g){
 
 #' @export
 ba_lik <- function(y, m){
-  prod(4 / (y * (y + 1) * (y + 2)))
+  prod(2*m*(m+1) / (y * (y + 1) * (y + 2)))
 }
 
 #' @export

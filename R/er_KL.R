@@ -1,6 +1,6 @@
 
 #' @export
-er_KL <- function(p, nl = 10, pl = 0.1, replicates = 1000, include_entropy = TRUE, entropy_cheat = FALSE, ...){
+er_KL <- function(p, nl = 10, pl = 0.1, replicates = 1000, include_entropy = TRUE, entropy_cheat = FALSE, both = FALSE, ...){
 
   ne <- choose(nl,2)
 
@@ -18,9 +18,13 @@ er_KL <- function(p, nl = 10, pl = 0.1, replicates = 1000, include_entropy = TRU
   if(is.nan(KL_div)){print(y)}
 
   if(!include_entropy){
-    output <- KL_div + entropy
-  } else {
     output <- KL_div
+  } else {
+    output <- KL_div - entropy
+  }
+
+  if(both){
+    output <- c(KL_div, entropy)
   }
 
   return(output)
@@ -29,8 +33,7 @@ er_KL <- function(p, nl = 10, pl = 0.1, replicates = 1000, include_entropy = TRU
 KL_calc <- function(nl, pl, y1, y2, ne, entropy){
 
   output <- - ne * log(1 - pl) - log(pl/(1-pl)) * y1 -
-    y2 -
-    entropy
+    y2
 
   return(output)
 
