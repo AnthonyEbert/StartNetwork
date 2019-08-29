@@ -1,4 +1,14 @@
 
+#' Sample km model
+#' @examples
+#' g <- igraph::sample_bipartite(1000, 1000, p = 1e-5, directed = FALSE)
+#' vertex_attr(g, "sexes") <- c(rep("male", 1000), rep("female", 1000))
+#'
+#' ecount(g)
+#' g1 <- sample_km(g)
+#'
+#' ecount(g1)
+#'
 #' @export
 sample_km <- function(g, pf = 0.01, ps = 0.005, dm = 10){
 
