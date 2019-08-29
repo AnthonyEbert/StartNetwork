@@ -6,6 +6,12 @@ output: pdf_document
 bibliography: link.bib
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+We are interested in finding the closest mechanistic model $q(\cdot|\lambda)$, parameterised by $\lambda$ to a known statistical model $p(\cdot|\theta)$, where $\theta$ is known. 
+
 $$
 \begin{aligned}
 KL[q(\cdot)||p(\cdot|\theta)] &= \sum_{y \in \mathcal{Y}} q(y) \log \frac{ q(y) }{p(y|\theta)} \\
@@ -29,6 +35,8 @@ $$
 For instance
 
 ```{r}
+set.seed(1)
+
 library(StartNetwork)
 
 x <- rbinom(1000, 10, 0.1)
@@ -47,35 +55,57 @@ entropy_calc(x)
 
 # The relative importance of the likelihood and entropy
 
+```{r}
+library(parallel)
+cl <- makeCluster(detectCores())
+
+param_range_large <- rep(seq(0.025, 0.975, by = 0.025), 100)
+
+x1 <- parSapply(cl, param_range_large, er_KL, pl = 0.3, include_entropy = TRUE, replicates = 1000)
+x2 <- parSapply(cl, param_range_large, er_KL, pl = 0.3, include_entropy = FALSE, replicates = 1000)
+
+param_range_small <- rep(seq(0.275, 0.325, by = 0.005), 100)
+
+x3 <- parSapply(cl, param_range_small, er_KL, pl = 0.3, include_entropy = TRUE, replicates = 1000)
+x4 <- parSapply(cl, param_range_small, er_KL, pl = 0.3, include_entropy = FALSE, replicates = 1000)
+
+
+```
+
+
 ```{r, fig.cap="KL divergence calculation with entropy"}
 library(ggplot2)
 
-x <- sapply(seq(0.025, 0.975, by = 0.025), er_KL, pl = 0.3, include_entropy = TRUE)
 
+df <- data.frame(x = x1, parameter = param_range_large)
 
-ggplot2::qplot(seq(0.025, 0.975, by = 0.025),x, xlab = "dyad connection probability", ylab = "KL divergence") + ggplot2::geom_vline(aes(xintercept = x), data = data.frame(x = 0.3), col = "red")
-
+ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot()
 
 ```
 
 ```{r, fig.cap = "KL divergence calculation without entropy"}
-y <- sapply(seq(0.025, 0.975, by = 0.025), er_KL, pl = 0.3, include_entropy = FALSE)
-ggplot2::qplot(seq(0.025, 0.975, by = 0.025),y, xlab = "dyad connection probability", ylab = "KL divergence") + ggplot2::geom_vline(aes(xintercept = x), data = data.frame(x = 0.3), col = "red")
+
+
+df <- data.frame(x = x2, parameter = param_range_large)
+
+ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot()
 ```
 
 
 ```{r, fig.cap="KL divergence calculation with entropy"}
 
-x <- sapply(seq(0.275, 0.325, by = 0.005), er_KL, pl = 0.3, include_entropy = TRUE, replicates = 5000)
 
-ggplot2::qplot(seq(0.275, 0.325, by = 0.005),x, xlab = "dyad connection probability", ylab = "KL divergence") + ggplot2::geom_vline(aes(xintercept = x), data = data.frame(x = 0.3), col = "red")
+df <- data.frame(x = x3, parameter = param_range_small)
+
+ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot()
 ```
 
 
 ```{r, fig.cap="KL divergence calculation without entropy"}
-x <- sapply(seq(0.275, 0.325, by = 0.005), er_KL, pl = 0.3, include_entropy = FALSE, replicates = 5000)
 
-ggplot2::qplot(seq(0.275, 0.325, by = 0.005),x, xlab = "dyad connection probability", ylab = "KL divergence") + ggplot2::geom_vline(aes(xintercept = x), data = data.frame(x = 0.3), col = "red")
+df <- data.frame(x = x4, parameter = param_range_small)
+
+ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot()
 
 ```
 
