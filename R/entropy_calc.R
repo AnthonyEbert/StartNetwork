@@ -1,7 +1,14 @@
 
 #' @export
-entropy_calc <- function(x){
-  C_hat <- 1 - length(nonduplicated(x)) / length(x)
+entropy_calc <- function(x, naive = FALSE, hash = FALSE){
+  if(hash){
+    x <- sapply(x, digest)
+  }
+
+  C_hat <- 1 - sum(nonduplicated(x)) / length(x)
+  if(naive){
+    C_hat <- 1
+  }
   p_hat <- as.numeric(prop.table(table(x)))
   p_tilde <- C_hat * p_hat
   entropy <- - sum( (p_tilde * log(p_tilde)) / (1 - (1 - p_tilde)^length(x)) )
@@ -9,9 +16,21 @@ entropy_calc <- function(x){
   return(entropy)
 }
 
+#' @export
 nonduplicated <- function(x){
+
+  return(!(duplicated(x) | duplicated(x, fromLast = TRUE)))
+}
+
+
+#' @export
+nonduplicated_legacy <- function(x, hash = FALSE){
+  if(hash){
+    x <- sapply(x, digest)
+  }
+
   output <- x[ave(x, x, FUN = length) == 1]
-  return(output)
+  return(length(output))
 }
 
 #' @export
