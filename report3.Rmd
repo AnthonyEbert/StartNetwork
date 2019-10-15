@@ -19,57 +19,20 @@ KL[q(\cdot)||p(\cdot|\theta)] &= \sum_{y \in \mathcal{Y}} q(y) \log \frac{ q(y) 
 \end{aligned}
 $$
 
-# Entropy estimation
-
-I use the following non-parameteric estimator of entropy [@vu2007coverage]:
-
-$$
-\begin{aligned}
-\tilde{H} &:= - \sum_k \frac{\tilde{p}_k \log \tilde{p}_k}{1 - (1-\tilde{p}_k)^n} \\
-\tilde{p}_k &:= \hat{C}\hat{p}_k \\
-\hat{C} &:= 1 - \frac{\#\{k|n_k = 1\}}{\sum_k n_k}\\
-\hat{p}_k &:= \frac{n_k}{n}
-\end{aligned}
-$$
-
-For instance
+# The relative importance of the likelihood and entropy
 
 ```{r}
 set.seed(1)
 
 library(StartNetwork)
 
-x <- rbinom(1000, 10, 0.1)
-head(x)
-
-mean(-log(dbinom(x, size = 10, 0.1)))
-entropy_calc(x)
-
-x <- rbinom(1000, 10, 0.2)
-head(x)
-
-mean(-log(dbinom(x, size = 10, 0.2)))
-entropy_calc(x)
-
-```
-
-# The relative importance of the likelihood and entropy
-
-```{r}
 library(parallel)
 cl <- makeCluster(detectCores())
 
-param_range_large <- rep(seq(0.025, 0.975, by = 0.025), 100)
+param_range_large <- rep(seq(0.025, 0.975, by = 0.025), 20)
 
-x1 <- parSapply(cl, param_range_large, er_KL, pl = 0.3, include_entropy = TRUE, replicates = 1000)
-x2 <- parSapply(cl, param_range_large, er_KL, pl = 0.3, include_entropy = FALSE, replicates = 1000)
-
-param_range_small <- rep(seq(0.275, 0.325, by = 0.005), 100)
-
-x3 <- parSapply(cl, param_range_small, er_KL, pl = 0.3, include_entropy = TRUE, replicates = 1000)
-x4 <- parSapply(cl, param_range_small, er_KL, pl = 0.3, include_entropy = FALSE, replicates = 1000)
-
-
+x1 <- parSapply(cl, param_range_large, er_KL, nl = 5, pl = 0.3, include_entropy = TRUE, replicates = 1000)
+x2 <- parSapply(cl, param_range_large, er_graphs_KL, nl = 5, pl = 0.3, include_entropy = TRUE, replicates = 1000)
 ```
 
 
@@ -77,9 +40,9 @@ x4 <- parSapply(cl, param_range_small, er_KL, pl = 0.3, include_entropy = FALSE,
 library(ggplot2)
 
 
-df <- data.frame(x = x1, parameter = param_range_large)
+df <- data.frame(x = c(x1, x2), parameter = rep(param_range_large, 2), summary_statistic = c(rep("a", length(param_range_large)), rep("b", length(param_range_large))))
 
-ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot()
+ggplot(df) + aes(x = parameter, y = x, group = parameter, col = summary_statistic) + geom_boxplot()
 
 ```
 
