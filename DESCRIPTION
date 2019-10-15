@@ -1,6 +1,6 @@
 Package: StartNetwork
 Title: What the Package Does (One Line, Title Case)
-Version: 0.3.5
+Version: 0.3.6
 Authors@R: 
     person(given = "First",
            family = "Last",

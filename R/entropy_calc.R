@@ -2,7 +2,7 @@
 #' @export
 entropy_calc <- function(x, naive = FALSE, hash = FALSE){
   if(hash){
-    x <- sapply(x, digest)
+    x <- sapply(x, digest::digest)
   }
 
   C_hat <- 1 - sum(nonduplicated(x)) / length(x)
@@ -26,7 +26,7 @@ nonduplicated <- function(x){
 #' @export
 nonduplicated_legacy <- function(x, hash = FALSE){
   if(hash){
-    x <- sapply(x, digest)
+    x <- sapply(x, digest::digest)
   }
 
   output <- x[ave(x, x, FUN = length) == 1]
