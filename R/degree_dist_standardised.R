@@ -26,7 +26,11 @@ double_factorial <- function(n){
 }
 
 #' @export
-number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE){
+number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, limit = TRUE){
+
+  if(!igraph::is_graphical(x)){
+    return(0)
+  }
 
   if(all(x == 0)){
     return(1)
@@ -34,9 +38,15 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE){
 
   L <- sum(x)/2
 
-  output <- double_factorial(2*L - 1) *
-    exp(-0.25 * (mean(x^2)/mean(x))^2) /
-    prod(factorial(x))
+  if(limit){
+    output <- double_factorial(2*L - 1) *
+      exp(-0.25 * (mean(x^2)/mean(x))^2) /
+      prod(factorial(x))
+  } else {
+    output <- double_factorial(mean(x)*length(x)) *
+      exp(-0.25 * (mean(x^2)/mean(x))^2) /
+      prod(factorial(x))
+  }
 
   if(sorted){
     size_factor <- as.numeric(arrangements::npermutations(k = length(x), freq = as.numeric(table(x)), bigz = bigz))
