@@ -27,6 +27,10 @@ set.seed(1)
 library(StartNetwork)
 
 library(parallel)
+```
+
+```{r, eval = FALSE}
+
 cl <- makeCluster(detectCores())
 
 param_range_large <- rep(seq(0.025, 0.975, by = 0.025), 20)
@@ -36,7 +40,7 @@ x2 <- parSapply(cl, param_range_large, er_graphs_KL, nl = 5, pl = 0.3, include_e
 ```
 
 
-```{r, fig.cap="KL divergence calculation with entropy"}
+```{r, fig.cap="KL divergence calculation with entropy", eval = FALSE}
 library(ggplot2)
 
 
@@ -46,56 +50,44 @@ ggplot(df) + aes(x = parameter, y = x, group = parameter, col = summary_statisti
 
 ```
 
-```{r, fig.cap = "KL divergence calculation without entropy"}
+```{r}
+replicates <- 10
+
+G_4 <- replicate(replicates,er_graphs_KL(0.3, pl = 0.3, nl = 4, replicates = 1000))
+G_8 <- replicate(replicates,er_graphs_KL(0.3, pl = 0.3, nl = 8, replicates = 1000))
+G_12 <- replicate(replicates,er_graphs_KL(0.3, pl = 0.3, nl = 12, replicates = 1000))
+G_16 <- replicate(replicates,er_graphs_KL(0.3, pl = 0.3, nl = 16, replicates = 1000))
+
+G <- data.frame(value = c(G_4, G_8, G_12, G_15), nodes = rep(c(4, 8, 12, 16), replicates), space = "G")
 
 
-df <- data.frame(x = x2, parameter = param_range_large)
+S2_4 <- replicate(replicates,er_dd_KL(0.3, pl = 0.3, nl = 4, replicates = 1000, sorted = FALSE))
+S2_8 <- replicate(replicates,er_dd_KL(0.3, pl = 0.3, nl = 8, replicates = 1000, sorted = FALSE))
+S2_12 <- replicate(replicates,er_dd_KL(0.3, pl = 0.3, nl = 12, replicates = 1000, sorted = FALSE))
+S2_16 <- replicate(replicates,er_dd_KL(0.3, pl = 0.3, nl = 16, replicates = 1000, sorted = FALSE))
 
-ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot()
+S2 <- data.frame(value = c(S2_4, S2_8, S2_12, S2_16), nodes = rep(c(4, 8, 12, 16), replicates), space = "S2")
+
+S3_4 <- replicate(replicates,er_dd_KL(0.3, pl = 0.3, nl = 4, replicates = 1000, sorted = TRUE))
+S3_8 <- replicate(replicates,er_dd_KL(0.3, pl = 0.3, nl = 8, replicates = 1000, sorted = TRUE))
+S3_12 <- replicate(replicates,er_dd_KL(0.3, pl = 0.3, nl = 12, replicates = 1000, sorted = TRUE))
+S3_16 <- replicate(replicates,er_dd_KL(0.3, pl = 0.3, nl = 16, replicates = 1000, sorted = TRUE))
+
+S3 <- data.frame(value = c(S3_4, S3_8, S3_12, S3_16), nodes = rep(c(4, 8, 12, 16), replicates), space = "S3")
+
+df <- dplyr::bind_rows(G, S2, S3)
+
+ggplot(df) + aes(x = factor(nodes), y = value, col = space) + geom_boxplot() 
 ```
-
-
-```{r, fig.cap="KL divergence calculation with entropy"}
-
-
-df <- data.frame(x = x3, parameter = param_range_small)
-
-ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot()
-```
-
-
-```{r, fig.cap="KL divergence calculation without entropy"}
-
-df <- data.frame(x = x4, parameter = param_range_small)
-
-ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot()
-
-```
-
-
-# Attempt with preferential attachment model
-
-The preferential attachment model has the following likelihood function:
-
-$$
-\begin{aligned}
-P(k | \rho) &= \frac{(\rho - 1) \Gamma(k) \Gamma(\rho)}{\Gamma(k + \rho)}
-\end{aligned}
-$$
-
-In this case there is no simple set of summary statistics. 
 
 ```{r}
+param_range_large <- rep(seq(0.2, 0.4, by = 0.05), 10)
 
-x <- sapply(seq(2.5, 5.5, by = 0.1), ba_KL, pl = 4.5)
+g <- parSapply(cl, param_range_large, er_graphs_KL, nl = 8, pl = 0.3, include_entropy = TRUE, replicates = 2000)
+s_2 <- parSapply(cl, param_range_large, er_dd_KL, nl = 8, pl = 0.3, replicates = 2000, sorted = FALSE)
+s_3 <- parSapply(cl, param_range_large, er_dd_KL, nl = 8, pl = 0.3, replicates = 2000, sorted = TRUE)
 
-ggplot2::qplot(seq(2.5, 5.5, by = 0.1),x, xlab = "power parameter", ylab = "KL divergence") + ggplot2::geom_vline(aes(xintercept = x), data = data.frame(x = 4.5), col = "red")
+df <- data.frame(x = c(g, s_2, s_3), parameter = rep(param_range_large, 3), space = c(rep("g", length(param_range_large)), rep("s_2", length(param_range_large)), rep("s_3", length(param_range_large)) ))
+
+ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot() + facet_wrap(~space)
 ```
-
-
-
-
-
-
-
-

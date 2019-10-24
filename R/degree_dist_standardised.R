@@ -26,7 +26,7 @@ double_factorial <- function(n){
 }
 
 #' @export
-number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, limit = TRUE){
+number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, type = 0){
 
   if(!igraph::is_graphical(x)){
     return(0)
@@ -36,16 +36,53 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, limit = TRUE){
     return(1)
   }
 
-  L <- sum(x)/2
 
-  if(limit){
+
+  M <- sum(x)
+  L <- M/2
+  n <- length(x)
+
+  if(all(x == (n-1))){
+    return(1)
+  }
+
+  if(type == 0){
     output <- double_factorial(2*L - 1) *
       exp(-0.25 * (mean(x^2)/mean(x))^2) /
       prod(factorial(x))
-  } else {
-    output <- double_factorial(mean(x)*length(x)) *
+  } else if(type == 1){
+    output <- double_factorial(mean(x)*n) *
       exp(-0.25 * (mean(x^2)/mean(x))^2) /
       prod(factorial(x))
+  } else if(type == 2){
+    kbar <- mean(x)
+    sigma2 <- mean((x/(kbar - 1))^2)
+    sigma3 <- mean((x/(kbar - 1))^3)
+    v2 <- 1 + sigma2
+    v3 <- 1 + 3 * sigma2 + sigma3
+
+    output <-
+      factorial(M) / (factorial(M/2) * 2^(M/2) * prod(factorial(x))) *
+        exp(- (kbar^2 * v2^2 - 1)/4 - (kbar^3 * (5 + 2 * v3 + 6 * v2^2 - 12 * v2))/(12*n))
+  } else if(type == 3){
+    kbar <- mean(x)
+    v2 <- mean(x^2) / (kbar^2 * n)
+
+    lambda <- kbar / (n - 1)
+    gamma2 <- n * kbar^2 * (v2 - 1) / ((n-1)^2)
+
+    output <- sqrt(2) * (lambda^lambda * (1 - lambda)^(1 - lambda))^(choose(n,2)) *
+      prod(choose(n-1,x) * exp(1/4 - gamma2^2 / (4*lambda^2 * (1-lambda)^2)))
+  } else if(type == 4){
+    kbar <- mean(x)
+
+    lambda <- kbar / (n - 1)
+    gamma2 <- (n - 1)^(-2) * sum((x - kbar)^2)
+
+    GtildeND <- (lambda^lambda * (1 - lambda)^(1 - lambda))^(choose(n,2)) *
+      prod(choose(n-1,x))
+
+    output <- sqrt(2) * exp(1/4 - gamma2^2 / (4*lambda^2 * (1-lambda)^2)) * GtildeND
   }
 
   if(sorted){
