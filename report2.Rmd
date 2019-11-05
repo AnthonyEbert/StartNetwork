@@ -1,0 +1,94 @@
+---
+title: "Report: ERGM model"
+author: "Anthony Ebert"
+date: "22/08/2019"
+output: pdf_document
+bibliography: link.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE, echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+ERGM: $p(y|\theta) = \frac{h(y) \exp[\theta \cdot s(y)]}{z(\theta)}$
+Mechanistic model: $q(y|\theta^q)$
+
+$$
+\begin{aligned}
+KL[q(\cdot|\theta^q)||p(\cdot|\theta)] &= \sum_{y \in \mathcal{Y}} q(y|\theta^q) \log \frac{ q(y|\theta^q) }{p(y|\theta)} \\
+&= \log[z(\theta)] - \sum_{y \in \mathcal{Y}} q(y|\theta^q) h(y) - \sum_{y \in \mathcal{Y}} q(y|\theta^q) \left[ \sum_i \theta_i s_i(y) \right] + \sum_{y \in \mathcal{Y}} q(y|\theta^q) \log q(y|\theta^q) 
+\end{aligned}
+$$
+
+We can ignore $z(\theta)$ since $\theta$ is fixed. We want to find $\theta^q$ associated with $q$ which most closely replicates $p$. 
+
+The specific ERGM model which is used as the statistical (and mechanistic) model has two summary statistics: number of edges and number of triangles. The true value for $\theta_1$ is zero and the true value of $\theta_2$ is 0.05. The plots below show the KL divergence when $\theta^q_2$ is changed. 
+
+The reference measure $h$ is the binomial likelihood. The number of nodes is 10, Monte Carlo estimates (n = 50) are used for all the summation terms over the distribution $q$. 
+
+# The relative importance of the likelihood and entropy
+
+```{r, fig.cap="KL divergence with entropy. True value is 0.05."}
+library(StartNetwork)
+library(parallel)
+cl <- makeCluster(detectCores())
+
+true_value <- 0.05
+param_range_large <- rep(seq(0.01, 0.1, by = 0.02), 10)
+
+x1 <- parSapply(cl, param_range_large, ergm_KL, etap = 0.05, replicates = 50)
+x2 <- parSapply(cl, param_range_large, ergm_KL, etap = 0.05, replicates = 50, entropy_coef = 0)
+```
+
+```{r}
+param_range_small <- rep(seq(0.04, 0.06, by = 0.005), 10)
+
+x3 <- parSapply(cl, param_range_small, ergm_KL, etap = 0.05, replicates = 50)
+x4 <- parSapply(cl, param_range_small, ergm_KL, etap = 0.05, replicates = 50, entropy_coef = 0)
+
+```
+
+
+```{r, fig.cap="KL divergence calculation with entropy"}
+library(ggplot2)
+
+
+df <- data.frame(x = x1, parameter = param_range_large)
+
+ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot() +
+  geom_vline(xintercept = true_value, col = "red")
+
+```
+
+```{r, fig.cap = "KL divergence calculation without entropy"}
+
+
+df <- data.frame(x = x2, parameter = param_range_large)
+
+ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot() +
+  geom_vline(xintercept = true_value, col = "red")
+```
+
+
+```{r, fig.cap="KL divergence calculation with entropy"}
+
+
+df <- data.frame(x = x3, parameter = param_range_small)
+
+ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot() +
+  geom_vline(xintercept = true_value, col = "red")
+```
+
+
+```{r, fig.cap="KL divergence calculation without entropy"}
+
+df <- data.frame(x = x4, parameter = param_range_small)
+
+ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot() +
+  geom_vline(xintercept = true_value, col = "red")
+
+```
+
+
+
+

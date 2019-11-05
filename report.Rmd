@@ -7,7 +7,7 @@ bibliography: link.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache = TRUE)
+knitr::opts_chunk$set(cache = TRUE, echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
 We are interested in finding the closest mechanistic model $q(\cdot|\lambda)$, parameterised by $\lambda$ to a known statistical model $p(\cdot|\theta)$, where $\theta$ is known. 

@@ -1,0 +1,98 @@
+---
+title: "Update"
+author: "Anthony Ebert"
+date: "07/10/2019"
+output: pdf_document
+---
+
+# Update 2019-10-07
+
+Last week we spoke about whether the base measure $h$ is important, and whether we are working on the space of networks, or the space of sufficient statistics and whether it matters. I thought the base measure was arbitrary, but last week I reported that, for ERGMS, $h$ is 1 when we are working on the sample space (space of networks) and equal to the number of combinations of networks corresponding to a particular set of summary statistics when working on the space of summary statistics. 
+
+I've thought about this more now, and I have concluded that there are separate KL divergences depending on whether we are working on the sample space (space of networks) or the space of summary statistics. 
+
+The advantage of working on the sample space is that we don't need to compute $h$, however estimating entropy requires a large sample size. The advantage of working on the sample space is that fewer samples are required to accurately estimate the entropy, however $h$ must be computed. This problem is non-trivial and mentioned in very few papers. 
+
+My previous results, for the Erdös-Renyi graph, are computed on the summary statistics rather than the original sample space of networks. This was possible because the expression for $h$ is known for Erdös-Renyi graphs. 
+
+I adapt the entropy function to work on the sample space itself, by assigning a unique id (hash) to each unique adjacency matrix. I then move to the space of permuted networks (networks which are equivalent with some node relabelling) --- it turns out that two adjacency matricies with identical eigenvalues are equivalent graphs (up to node relabelling). 
+
+## On the sample space
+
+\begin{align*}
+KL[q(\cdot)||p(\cdot|\theta)]_{\mathcal{Y}} &= \sum_{y \in \mathcal{Y}} q(y) \log \frac{ q(y) }{p(y|\theta)} \\
+&= \sum_{y \in \mathcal{Y}} q(y) \log q(y) + \log z(\theta) - E_{y \sim q} [\theta^{\prime} S(y)]
+\end{align*}
+
+## On a space of summary statistics
+
+\begin{align*}
+KL[q(\cdot)||p(\cdot|\theta)]_{\mathcal{S(\mathcal{Y})}} &= \sum_{s_y \in \mathcal{S(Y)}} q_S(y) \log \frac{ q_S(y) }{p(s_y|\theta)} \\
+&= \sum_{s_y \in \mathcal{S(Y)}} q_S(s_y) \log q_S(s_y) + \log z(\theta) - E_{s_y \sim q_S} [\theta^{\prime} s_y] - E_{s_y \sim q_S}[\log h(s_y)] \\
+&\quad \quad 
+\end{align*}
+
+```{r, warning=FALSE, message=FALSE}
+
+library(igraph)
+library(purrr)
+library(digest)
+library(StartNetwork)
+```
+
+```{r BA}
+set.seed(1)
+
+# Barabasi Albert model
+
+x <- replicate(1000, sample_pa(8, directed = FALSE), simplify = FALSE)
+
+plot(x[[1]])
+
+y <- sapply(x, purrr::compose(digest, igraph::as_adj))
+
+head(y)
+
+entropy_calc(y)
+
+y_permute <- 
+  sapply(x, 
+    purrr::compose(digest, partial(round, digits = 5), sort, ~ .$values, eigen, igraph::as_adj))
+
+entropy_calc(y_permute)
+
+equivalent <- which(!nonduplicated(y_permute))[1]
+
+which(y_permute == y_permute[equivalent])
+
+plot(x[[1]], label=1:8)
+plot(x[[166]], label=1:8)
+plot(x[[171]], label=1:8)
+```
+
+
+```{r, message=FALSE}
+library(ergm)
+```
+
+
+```{r ERGM}
+set.seed(2)
+
+x <- simulate(network(6, directed = FALSE) ~ edges + triangle, coef = c(0, 0.01), nsim = 2000)
+
+entropy_calc(x, hash = TRUE)
+
+y_permute <- sapply(x, purrr::compose(digest, partial(round, digits = 5), sort, ~ .$values, eigen, network::as.matrix.network.adjacency))
+
+entropy_calc(y_permute)
+
+equivalent <- which(!nonduplicated(y_permute))[1]
+
+which(y_permute == y_permute[equivalent])
+
+plot(x[[1]], label=1:6)
+plot(x[[14]], label=1:6)
+plot(x[[44]], label=1:6)
+```
+
