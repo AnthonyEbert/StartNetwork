@@ -50,6 +50,10 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, type = 0){
     output <- double_factorial(2*L - 1) *
       exp(-0.25 * (mean(x^2)/mean(x))^2) /
       prod(factorial(x))
+  } else if(type == "log"){
+    output <- log(double_factorial(2*L - 1)) +
+      (-0.25 * (mean(x^2)/mean(x))^2) -
+      sum(lfactorial(x))
   } else if(type == 1){
     output <- double_factorial(mean(x)*n) *
       exp(-0.25 * (mean(x^2)/mean(x))^2) /
@@ -87,14 +91,58 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, type = 0){
 
   if(sorted){
     size_factor <- as.numeric(arrangements::npermutations(k = length(x), freq = as.numeric(table(x)), bigz = bigz))
-    output <- output * size_factor
+    if(type != "log"){
+      output <- output * size_factor
+    } else {
+      output <- output + log(size_factor)
+    }
   }
 
 
   return(output)
 }
 
+#' @export
+number_triangle_graphs <- function(x,n){
 
+  stopifnot(x >= 0)
+  stopifnot(x %% 1 == 0)
 
+  xvec <- 0:I(x-1)
 
+  output <- prod(choose(n,3) - xvec)/factorial(x)
+
+  return(output)
+}
+
+#' @export
+lnumber_triangle_graphs <- function(x,n){
+
+  stopifnot(x >= 0)
+  stopifnot(x %% 1 == 0)
+
+  xvec <- 0:I(x-1)
+
+  z <- polyroot(z = c(-x*factorial(3), 2, -3, 1))
+  z1 <- which.min(abs(Im(z)))
+  z <- max(3, n - ceiling(Re(z[z1])))
+
+  output <- x*lchoose(n,3) - lfactorial(x) + sum(lchoose(choose(z,2), 0:choose(z,2)))
+
+  return(output)
+}
+
+#' @export
+lnumber_triangle_graphsB <- function(x, n){
+
+  stopifnot(x >= 0)
+  stopifnot(x %% 1 == 0)
+
+  xvec <- 0:I(x-1)
+
+  output <- sum(lchoose(n - 2*xvec,3) )
+
+  return(output)
+
+}
 

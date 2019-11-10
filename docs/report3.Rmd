@@ -91,8 +91,18 @@ df <- data.frame(x = c(g, s_2, s_3), parameter = rep(param_range_large, 3), spac
 
 ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot() + facet_wrap(~space)
 
-param_range_large <- rep(seq(3, 5, by = 0.25), 10)
-s_3 <- parSapply(cl, param_range_large, ba_dd_KL, nl = 10, pl = 5, replicates = 2000, sorted = TRUE)
+param_range_large <- rep(seq(1, 9), 10)
+s_3 <- parSapply(cl, param_range_large, ba_dd_KL_m, nl = 15, pl = 1, replicates = 20, sorted = TRUE)
 df <- data.frame(x = s_3, parameter = param_range_large)
 ggplot(df) + aes(x = parameter, y = x, group = parameter) + geom_boxplot()
+
+
 ```
+
+```{r}
+ba_dd_KL_m(2, nl = 30, pl = -15)
+```
+
+
+
+
