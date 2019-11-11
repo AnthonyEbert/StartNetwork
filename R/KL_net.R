@@ -40,14 +40,14 @@ KL_net <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRU
 
   ne <- choose(n,2)
 
-  g <- lapply(rep(theta_m, replicates), mech_net, n = n, args = mech_args)
-  y <- sapply(g, igraph::gsize)
-  ds <- lapply(g, igraph::degree)
+  g <- lapply(rep(theta_m, replicates), func, mech_net = mech_net, lstat = lstat, n = n, args = mech_args)
+
+  ds <- lapply(g, function(x){x$degree})
   if(sorted){
-    ds <- lapply(ds, sort)
+    ds <- lapply(ds, sort.int)
   }
 
-  y1 <- aapply(g, lstat) %>% rowMeans()
+  y1 <- aapply(g, function(x){x$stat}) %>% rowMeans()
 
   stopifnot(length(y1) == length(theta_s))
   y2 <- mean(sapply(ds, number_of_graphs_dd, sorted = sorted, type = "log"))

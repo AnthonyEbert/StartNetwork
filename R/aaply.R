@@ -7,3 +7,9 @@ aapply <- function(X, FUN, ...){
   }
   return(x)
 }
+
+
+func <- function(x, mech_net, lstat, ...){
+  y <- mech_net(x, ...)
+  return(list(degree = igraph::degree(y), stat = lstat(y)))
+}
