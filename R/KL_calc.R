@@ -10,7 +10,7 @@ KL_calc <- function(nl, pl, y1, y2, ne, entropy){
 
 KL_calc2 <- function(nl, pl, y1, y2, ne, entropy){
 
-  output <- - pl * y1 -
+  output <- - sum(pl * y1) -
     y2
 
   return(output)

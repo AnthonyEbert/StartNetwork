@@ -1,6 +1,6 @@
 Package: StartNetwork
-Title: What the Package Does (One Line, Title Case)
-Version: 0.3.10
+Title: Calculates KL divergence between mechanistic and statistical network models
+Version: 0.4.0
 Authors@R: 
     person(given = "First",
            family = "Last",
@@ -15,4 +15,6 @@ RoxygenNote: 6.1.1
 Imports: 
     igraph,
     ergm,
-    network
+    network,
+    digest,
+    arrangements

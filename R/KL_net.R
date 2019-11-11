@@ -3,7 +3,11 @@
 #' @param theta_m numeric mechanistic model parameters
 #' @param n integer number of nodes
 #' @param theta_s numeric statistical model parameters
-#' @param replicates
+#' @param replicates numeric number of replicates
+#' @param sorted logical whether to consider the sorted or unsorted degree sequence as the integral statistic
+#' @param mech_net function the mechanistic network simulator
+#' @param mech_args list arguments to the mechanistic network simulator
+#' @param lstat function computes the likelihood statistic
 #' @importFrom magrittr %>%
 #' @examples
 #'
@@ -16,9 +20,9 @@
 #' lstat = function(x){sum(igraph::degree(x) == 6)}
 #'
 #' KL_net(
-#'   theta_m = 5,
-#'   theta_s = 1,
-#'   n = 15,
+#'   theta_m = theta_m,
+#'   theta_s = theta_s,
+#'   n = n,
 #'   mech_net = mech_net,
 #'   mech_args = mech_args,
 #'   lstat = lstat
