@@ -26,6 +26,24 @@ double_factorial <- function(n){
 }
 
 #' @export
+ldouble_factorial <- function(n){
+
+  even <- n %% 2 == 0
+
+  stopifnot(is.logical(even))
+
+  if(even){
+    k <- n/2
+    output <- k * log(2) + lfactorial(k)
+  } else {
+    k <- (n+1)/2
+    output <- lfactorial(2*k) - k * log(2) - lfactorial(k)
+  }
+
+  return(output)
+}
+
+#' @export
 number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, type = 0){
 
   if(!igraph::is_graphical(x)){
@@ -51,7 +69,7 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, type = 0){
       exp(-0.25 * (mean(x^2)/mean(x))^2) /
       prod(factorial(x))
   } else if(type == "log"){
-    output <- log(double_factorial(2*L - 1)) +
+    output <- ldouble_factorial(2*L - 1) +
       (-0.25 * (mean(x^2)/mean(x))^2) -
       sum(lfactorial(x))
   } else if(type == 1){
@@ -90,7 +108,7 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, type = 0){
   }
 
   if(sorted){
-    size_factor <- as.numeric(arrangements::npermutations(k = length(x), freq = as.numeric(table(x)), bigz = bigz))
+    size_factor <- as.numeric(arrangements::npermutations(k = length(x), freq = tabulate(x), bigz = bigz))
     if(type != "log"){
       output <- output * size_factor
     } else {
