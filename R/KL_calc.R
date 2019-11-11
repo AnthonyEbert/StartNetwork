@@ -8,10 +8,10 @@ KL_calc <- function(nl, pl, y1, y2, ne, entropy){
 
 }
 
-KL_calc2 <- function(nl, pl, y1, y2, ne, entropy){
+KL_calc2 <- function(pl, y1, y2, entropy){
 
   output <- - sum(pl * y1) -
-    y2
+    y2 - entropy
 
   return(output)
 

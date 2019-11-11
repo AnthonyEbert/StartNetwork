@@ -29,7 +29,7 @@
 #' )
 #'
 #' @export
-KL_net <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRUE, mech_net, mech_args, lstat){
+KL_net <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRUE, mech_net, mech_args, lstat, lapply_opt = TRUE){
 
   stopifnot(is.numeric(n))
   stopifnot(n %% 1 == 0)
@@ -40,7 +40,13 @@ KL_net <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRU
 
   ne <- choose(n,2)
 
-  g <- lapply(rep(theta_m, replicates), func, mech_net = mech_net, lstat = lstat, n = n, args = mech_args)
+  if(lapply_opt){
+    g <- lapply(rep(theta_m, replicates), func, mech_net = mech_net, lstat = lstat, n = n, args = mech_args)
+  } else if(!lapply_opt){
+    g <- mech_net(theta_m, n, mech_args, nsim = replicates)
+    g <- purrr::map(g, purrr::compose(function(x){list(degree = as.numeric(igraph::degree(x)) / 2, stat = lstat(x))}, igraph::graph_from_adjacency_matrix, network::as.matrix.network.adjacency), mode = "undirected")
+  }
+
 
   ds <- lapply(g, function(x){x$degree})
   if(sorted){
@@ -54,9 +60,7 @@ KL_net <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRU
 
   entropy <- entropy_calc(ds, hash = TRUE)
 
-  KL_div <- KL_calc2(n, theta_s, y1, y2, ne, entropy)
-
-  output <- KL_div - entropy
+  output <- KL_calc2(theta_s, y1, y2, entropy)
 
   return(output)
 }

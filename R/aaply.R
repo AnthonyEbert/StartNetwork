@@ -11,5 +11,10 @@ aapply <- function(X, FUN, ...){
 
 func <- function(x, mech_net, lstat, ...){
   y <- mech_net(x, ...)
-  return(list(degree = igraph::degree(y), stat = lstat(y)))
+  if(class(y) == "igraph"){
+    return(list(degree = igraph::degree(y), stat = lstat(y)))
+  } else if(class(y) == "network"){
+    adj <- network::as.matrix.network.adjacency(y) %>% graph.adjacency()
+    return(list(degree = igraph::degree(adj) %>% as.numeric, stat = lstat(adj)))
+  }
 }
