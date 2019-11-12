@@ -18,6 +18,8 @@ g <- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_ne
 
 df <- data.frame(parameter = theta_p, KL = g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 3")
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 4")
 
 ggsave(filename = "example4.pdf")
+
+save.image("example4.RData")

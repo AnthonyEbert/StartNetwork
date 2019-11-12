@@ -15,6 +15,6 @@ func <- function(x, mech_net, lstat, ...){
     return(list(degree = igraph::degree(y), stat = lstat(y)))
   } else if(class(y) == "network"){
     adj <- network::as.matrix.network.adjacency(y) %>% graph.adjacency()
-    return(list(degree = igraph::degree(adj) %>% as.numeric, stat = lstat(adj)))
+    return(list(degree = igraph::degree(adj) %>% as.numeric / 2, stat = lstat(adj)))
   }
 }

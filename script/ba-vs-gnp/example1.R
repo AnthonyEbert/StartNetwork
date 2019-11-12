@@ -21,3 +21,5 @@ df <- data.frame(parameter = theta_m, KL = g)
 ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 1")
 
 ggsave(filename = "example1.pdf")
+
+save.image("example1.RData")

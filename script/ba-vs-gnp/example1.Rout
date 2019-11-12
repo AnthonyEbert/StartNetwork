@@ -1,0 +1,48 @@
+
+R version 3.6.1 (2019-07-05) -- "Action of the Toes"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> 
+> load("init.RData")
+> 
+> library(StartNetwork)
+> library(parallel)
+> library(ggplot2)
+> 
+> cl <- makeCluster(detectCores())
+> 
+> lstat = function(x){sum(igraph::degree(x) == 6)}
+> 
+> g <- parSapply(cl, theta_m, KL_net, theta_s = theta_s[1], n = n, mech_net = mech_net_ba, mech_args = mech_args_ba, replicates = replicates, lstat = lstat, sorted = TRUE)
+> 
+> df <- data.frame(parameter = theta_m, KL = g)
+> 
+> ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 1")
+Warning message:
+Removed 2 rows containing non-finite values (stat_boxplot). 
+> 
+> ggsave(filename = "example1.pdf")
+Saving 7 x 7 in image
+Warning message:
+Removed 2 rows containing non-finite values (stat_boxplot). 
+> 
+> proc.time()
+   user  system elapsed 
+  1.841   0.359  51.237 
