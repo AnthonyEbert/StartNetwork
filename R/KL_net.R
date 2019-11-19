@@ -29,7 +29,7 @@
 #' )
 #'
 #' @export
-KL_net <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRUE, mech_net, mech_args, lstat, lapply_opt = TRUE){
+KL_net <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRUE, mech_net, mech_args, lstat, lapply_opt = TRUE, ds_return = FALSE, pmf = NULL){
 
   stopifnot(is.numeric(n))
   stopifnot(n %% 1 == 0)
@@ -53,6 +53,8 @@ KL_net <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRU
     ds <- lapply(ds, sort.int)
   }
 
+  if(ds_return){return(ds)}
+
   y1 <- aapply(g, function(x){x$stat}) %>% rowMeans()
 
   stopifnot(length(y1) == length(theta_s))
@@ -60,7 +62,18 @@ KL_net <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRU
 
   entropy <- entropy_calc(ds, hash = TRUE)
 
-  output <- KL_calc2(theta_s, y1, y2, entropy)
+  if(is.null(pmf)){
+    output <- KL_calc2(theta_s, y1, y2, entropy)
+  } else {
+    y_hash <- sapply(ds, digest::digest, algo = "md5")
+    y_table <- table(y_hash)
+    y_df <- as.data.frame(y_table)
+    names(y_df) <- c("hash", "Freq_y")
+    out_df <- acetools::left_join_quietly(y_df, pmf, by = "hash")
+    out_df$Freq_x[which(is.na(out_df$Freq_x))] <- 1/dim(pmf)[1] / 100
+    likely <- sum(log(apply(out_df[,c(2,3)], 1, prod)), na.rm = TRUE)
+    output <- -likely - y2 - entropy
+  }
 
   return(output)
 }

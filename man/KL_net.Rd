@@ -5,7 +5,8 @@
 \title{KL Divergence of mechanistic and statistical network models}
 \usage{
 KL_net(theta_m, n = 10, theta_s = 3, replicates = 1000,
-  sorted = TRUE, mech_net, mech_args, lstat, lapply_opt = TRUE)
+  sorted = TRUE, mech_net, mech_args, lstat, lapply_opt = TRUE,
+  ds_return = FALSE, pmf = NULL)
 }
 \arguments{
 \item{theta_m}{numeric mechanistic model parameters}
