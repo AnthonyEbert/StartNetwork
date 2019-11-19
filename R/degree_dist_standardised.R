@@ -108,11 +108,11 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, type = 0){
   }
 
   if(sorted){
-    size_factor <- as.numeric(arrangements::npermutations(k = length(x), freq = tabulate(x), bigz = bigz))
+    size_factor <- arrangements::npermutations(k = length(x), freq = as.numeric(table(x)), bigz = bigz)
     if(type != "log"){
       output <- output * size_factor
     } else {
-      output <- output + log(size_factor)
+      output <- output + gmp::log.bigz(size_factor)
     }
   }
 
