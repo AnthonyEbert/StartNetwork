@@ -1,12 +1,16 @@
 disjoint	c	choose	cumsum	log	number_of_graphs_dd	rep	sapply	seq
-disjoint-plot	abline	c	par	plot	points	x	y0	y1
+disjoint-plot	abline	c	par	plot	x	y0
 single-triangle	c	choose	log	number_of_graphs_dd	rep	sapply	seq
-single-triangle-plot	abline	c	n	par	plot	points	x	y0	y1
+single-triangle-plot	abline	c	par	plot	x	y0
 reverse-triangle	c	choose	log	number_of_graphs_dd	rep	sapply	seq
-reverse-triangle-plot	abline	c	n	par	plot	points	x	y0	y1
+reverse-triangle-plot	abline	c	par	plot	x	y0
 regular-graph	^	choose	exp	log	number_of_graphs_dd	rep	sapply	seq	sqrt
-regular-graph-plot	abline	c	n	par	plot	points	x	y0	y1
+regular-graph-plot	abline	c	par	plot	x	y0
 metaparameters	
 example1	::	$<-	detectCores	do.call	KL_net	list	log	makeCluster	n	parSapply	rep	replicates	seq	stopCluster
 example1-processing	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
-example2	::	$<-	aes	data.frame	detectCores	do.call	geom_boxplot	geom_vline	ggplot	ggtitle	KL	KL_net	list	log	makeCluster	n	parameter	parSapply	rep	replicates	seq	stopCluster
+example2	::	$<-	detectCores	do.call	KL_net	list	log	makeCluster	n	parSapply	rep	replicates	seq	stopCluster
+example1-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
+example2-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
+example3	::	$<-	detectCores	do.call	KL_net	list	log	makeCluster	n	parSapply	rep	replicates	seq	stopCluster
+example3-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value

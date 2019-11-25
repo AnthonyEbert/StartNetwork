@@ -185,7 +185,9 @@ summary {
 </div>
 
 
-<pre class="r"><code>library(StartNetwork)
+<pre class="r"><code>set.seed(1)
+
+library(StartNetwork)
 library(parallel)
 library(ggplot2)
 
@@ -211,7 +213,7 @@ sessionInfo()</code></pre>
 ## [8] base     
 ## 
 ## other attached packages:
-## [1] ggplot2_3.2.0      StartNetwork_0.5.1
+## [1] ggplot2_3.2.0      StartNetwork_0.5.3
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] igraph_1.2.4.1   Rcpp_1.0.2       knitr_1.23       magrittr_1.5    
@@ -224,18 +226,19 @@ sessionInfo()</code></pre>
 ## [29] compiler_3.6.1   pillar_1.4.2     scales_1.0.0     pkgconfig_2.0.2</code></pre>
 <div id="tests" class="section level1">
 <h1>Tests</h1>
+<p>Here we test the functions used to estimate entropy and estimate the number of graphs corresponding to a particular sorted degree sequence. We find that the entropy computation is accurate, but estimating the number of graphs corresponding to a sorted degree sequence is more complicated.</p>
 <div id="entropy" class="section level2">
 <h2>Entropy</h2>
 <p>We compare entropy computed with the non-parameter estimator <code>entropy_calc</code> using samples from the binomial distribution, with the analytic expression for the limit of entropy for the binomial distribution. The same comparison is also made with the Poisson distribution.</p>
 <pre class="r"><code>x &lt;- rbinom(10000, 1000, 0.9)
 entropy_calc(x)</code></pre>
-<pre><code>## [1] 3.688158</code></pre>
+<pre><code>## [1] 3.665764</code></pre>
 <pre class="r"><code>1/2 * log(2*pi*exp(1)*1000*0.9*0.1)</code></pre>
 <pre><code>## [1] 3.668843</code></pre>
 <pre class="r"><code>lambda &lt;- 50
 x &lt;- rpois(1000, lambda)
 entropy_calc(x)</code></pre>
-<pre><code>## [1] 3.376926</code></pre>
+<pre><code>## [1] 3.320128</code></pre>
 <pre class="r"><code>k &lt;- 1:100
 lambda * (1 - log(lambda)) + exp(-lambda) * sum((lambda^k * lfactorial(k))/factorial(k))</code></pre>
 <pre><code>## [1] 3.373266</code></pre>
@@ -247,21 +250,17 @@ lambda * (1 - log(lambda)) + exp(-lambda) * sum((lambda^k * lfactorial(k))/facto
 <pre class="r"><code>disjoint &lt;- choose(choose(seq(15, 7, by = -2),2), 1)
 x &lt;- cumsum(log(disjoint[1:5]))
 
-disjoint_dd &lt;- function(x, type = &quot;log&quot;, n = 15){
-  number_of_graphs_dd(c(rep(0,n - 2*x), rep(1, 2*x)), type = type)
+disjoint_dd &lt;- function(x, n = 15){
+  number_of_graphs_dd(c(rep(0,n - 2*x), rep(1, 2*x)))
 }
 
-y0 &lt;- sapply(1:5, disjoint_dd)
-y1 &lt;- sapply(1:5, disjoint_dd, type = &quot;log1&quot;)</code></pre>
+y0 &lt;- sapply(1:5, disjoint_dd)</code></pre>
 <pre class="r"><code>par(pty=&quot;s&quot;)
 
 plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1)
-points(x, y1, col = &quot;red&quot;)
 abline(c(0,1), col = &quot;blue&quot;)</code></pre>
 <p><img src="log-file_files/figure-html/disjoint-plot-1.png" width="672" /></p>
-<pre class="r"><code>plot(x, y0 - x, xlim = c(0, 20), ylim = c(-6, 6))
-points(x, y1 - x, col = &quot;red&quot;)</code></pre>
-<p><img src="log-file_files/figure-html/disjoint-plot-2.png" width="672" /></p>
+<pre class="r"><code># plot(x, y0 - x, xlim = c(0, 20), ylim = c(-6, 6))</code></pre>
 </div>
 </div>
 <div id="single-triangle" class="section level2">
@@ -271,21 +270,17 @@ points(x, y1 - x, col = &quot;red&quot;)</code></pre>
 onetriangle &lt;- choose(n,3)
 x &lt;- log(onetriangle[1:6])
 
-triangle_dd &lt;- function(x, type = &quot;log&quot;, n = 15){
-  number_of_graphs_dd(c(rep(0,x - 3), c(2,2,2)), type = type)
+triangle_dd &lt;- function(x, n = 15){
+  number_of_graphs_dd(c(rep(0,x - 3), c(2,2,2)))
 }
 
-y0 &lt;- sapply(n, triangle_dd)
-y1 &lt;- sapply(n, triangle_dd, type = &quot;log1&quot;)</code></pre>
+y0 &lt;- sapply(n, triangle_dd)</code></pre>
 <pre class="r"><code>par(pty=&quot;s&quot;)
 
 plot(x, y0, xlim = c(0, 10), ylim = c(0, 10), asp = 1)
-points(x, y1, col = &quot;red&quot;, asp = 1)
 abline(c(0,1), col = &quot;blue&quot;)</code></pre>
 <p><img src="log-file_files/figure-html/single-triangle-plot-1.png" width="672" /></p>
-<pre class="r"><code>plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
-points(n, y1 - x, col = &quot;red&quot;, asp = 1)</code></pre>
-<p><img src="log-file_files/figure-html/single-triangle-plot-2.png" width="672" /></p>
+<pre class="r"><code># plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))</code></pre>
 </div>
 <div id="single-reverse-triangle" class="section level2">
 <h2>Single reverse triangle</h2>
@@ -294,21 +289,17 @@ points(n, y1 - x, col = &quot;red&quot;, asp = 1)</code></pre>
 onetriangle &lt;- choose(n,3)
 x &lt;- log(onetriangle[1:6])
 
-triangle_dd &lt;- function(x, type = &quot;log&quot;){
-  number_of_graphs_dd(c(rep(x - 1 - 3,x - 3), c(0,0,0)), type = type)
+triangle_dd &lt;- function(x){
+  number_of_graphs_dd(c(rep(x - 1 - 3,x - 3), c(0,0,0)))
 }
 
-y0 &lt;- sapply(n, triangle_dd)
-y1 &lt;- sapply(n, triangle_dd, type = &quot;log1&quot;)</code></pre>
+y0 &lt;- sapply(n, triangle_dd)</code></pre>
 <pre class="r"><code>par(pty=&quot;s&quot;)
 
 plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1)
-points(x, y1, col = &quot;red&quot;, asp = 1)
 abline(c(0,1), col = &quot;blue&quot;)</code></pre>
 <p><img src="log-file_files/figure-html/reverse-triangle-plot-1.png" width="672" /></p>
-<pre class="r"><code>plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
-points(n, y1 - x, col = &quot;red&quot;, asp = 1)</code></pre>
-<p><img src="log-file_files/figure-html/reverse-triangle-plot-2.png" width="672" /></p>
+<pre class="r"><code># plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))</code></pre>
 <p>It seems that the base measure for the sorted degree sequence is more accurately measured for spare graphs than dense graphs. Let’s look now at graphs in the middle, regular graphs where the degree is n/2.</p>
 </div>
 <div id="regular-graph" class="section level2">
@@ -322,21 +313,19 @@ lambda &lt;- d / (n - 1)
 regulargraphs &lt;- sqrt(2) * exp(0.25) * (lambda^lambda * (1-lambda)^(1-lambda))^choose(n,2) * (choose(n-1,d)^n)
 x &lt;- log(regulargraphs)
 
-regular_dd &lt;- function(x, type = &quot;log&quot;){
-  number_of_graphs_dd(rep(x/2,x), type = type)
+regular_dd &lt;- function(x){
+  number_of_graphs_dd(rep(x/2,x))
 }
 
-y0 &lt;- sapply(n, regular_dd)
-y1 &lt;- sapply(n, regular_dd, type = &quot;log1&quot;)</code></pre>
+y0 &lt;- sapply(n, regular_dd)</code></pre>
 <pre class="r"><code>par(pty=&quot;s&quot;)
 
 plot(x, y0, xlim = c(0, 110), ylim = c(0, 110), asp = 1)
-points(x, y1, col = &quot;red&quot;, asp = 1)
 abline(c(0,1), col = &quot;blue&quot;)</code></pre>
 <p><img src="log-file_files/figure-html/regular-graph-plot-1.png" width="672" /></p>
-<pre class="r"><code>plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
-points(n, y1 - x, col = &quot;red&quot;, asp = 1)</code></pre>
-<p><img src="log-file_files/figure-html/regular-graph-plot-2.png" width="672" /></p>
+<pre class="r"><code># plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))</code></pre>
+<p>The base measure seems to accurately compute the sorted degree sequence for a regular graph midway between sparse and dense.</p>
+<p>We demonstrate the application of these formulas with a simple example. The mechanistic model is GNP, and the statistical model is an ERGM where the summary statistic is the number of edges. We start with a sparse model where the parameter is 0.1, and then the second example is a dense model where the parameter is 0.9. Finally in example 3, we fix the expression so that it is more accurate for dense graphs.</p>
 </div>
 </div>
 <div id="examples" class="section level1">
@@ -365,13 +354,13 @@ theta_s &lt;- log(true_value/(1 - true_value))
 
 cl &lt;- makeCluster(detectCores())
 
-g &lt;- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, type = &quot;log&quot;)
+g &lt;- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = FALSE)
 
 stopCluster(cl)</code></pre>
 <pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)
 
 ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 1&quot;) + geom_vline(xintercept = true_value)</code></pre>
-<p><img src="log-file_files/figure-html/example1-processing-1.png" width="672" /></p>
+<p><img src="log-file_files/figure-html/example1-plot-1.png" width="672" /></p>
 </div>
 <div id="example-2" class="section level2">
 <h2>Example 2</h2>
@@ -395,18 +384,55 @@ theta_s &lt;- log(true_value/(1 - true_value))
 
 cl &lt;- makeCluster(detectCores())
 
-g &lt;- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, type = &quot;log1&quot;)
+g &lt;- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = FALSE)
 
-df &lt;- data.frame(parameter = theta_p, KL = g)
+stopCluster(cl)</code></pre>
+<pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)
 
 ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 2&quot;) + geom_vline(xintercept = true_value)</code></pre>
-<p><img src="log-file_files/figure-html/example2-1.png" width="672" /></p>
-<pre class="r"><code>stopCluster(cl)</code></pre>
+<p><img src="log-file_files/figure-html/example2-plot-1.png" width="672" /></p>
+<p>Since we have found the space of dense graphs is counted inaccurately when the equation of <span class="citation">Bianconi (2009)</span> is naively applied, we map the space of dense graphs to the space of sparse graphs. In other words, we perform this simple conversion on the degree sequence: <span class="math display">\[
+d^* = n - d - 1
+\]</span></p>
+</div>
+<div id="example-3" class="section level2">
+<h2>Example 3</h2>
+<p>Mechanistic model: GNP<br />
+Network model: ERGM<br />
+Integral stat: sorted degree sequence<br />
+Likelihood stat: number of edges</p>
+<pre class="r"><code>mech_net_gnp = function(p, n, args){
+  args$p = p;
+  args$n = n;
+  do.call(igraph::sample_gnp, args)
+}
+
+mech_args_gnp = list(directed = FALSE)
+
+lstat = function(x){igraph::gsize(x)}
+
+true_value &lt;- 0.9
+theta_p &lt;- rep(seq(0.80, 0.99, by = 0.01), 5)
+theta_s &lt;- log(true_value/(1 - true_value))
+
+cl &lt;- makeCluster(detectCores())
+
+g &lt;- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = TRUE)
+
+stopCluster(cl)</code></pre>
+<pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 3&quot;) + geom_vline(xintercept = true_value)</code></pre>
+<p><img src="log-file_files/figure-html/example3-plot-1.png" width="672" /></p>
+<p>We have successfully retrieved the parameter for a dense graph.</p>
 </div>
 </div>
 <div id="bibliography" class="section level1 unnumbered">
 <h1>Bibliography</h1>
 <div id="refs" class="references">
+<div id="ref-bianconi2009entropy">
+<p>Bianconi, Ginestra. 2009. “Entropy of Network Ensembles.” <em>Physical Review E</em> 79 (3). APS: 036114.</p>
+</div>
 <div id="ref-mckay1991asymptotic">
 <p>McKay, Brendan D, and Nicholas C Wormald. 1991. “Asymptotic Enumeration by Degree Sequence of Graphs with Degreeso (N 1/2).” <em>Combinatorica</em> 11 (4). Springer: 369–82.</p>
 </div>
