@@ -1,0 +1,12 @@
+disjoint	disjoint	disjoint_dd	x	y0	y1
+disjoint-plot	
+single-triangle	n	onetriangle	triangle_dd	x	y0	y1
+single-triangle-plot	
+reverse-triangle	n	onetriangle	triangle_dd	x	y0	y1
+reverse-triangle-plot	
+regular-graph	d	lambda	n	regular_dd	regulargraphs	x	y0	y1
+regular-graph-plot	
+metaparameters	n	replicates
+example1	cl	g	lstat	mech_args_gnp	mech_net_gnp	theta_p	theta_s	true_value
+example1-processing	df
+example2	cl	df	g	lstat	mech_args_gnp	mech_net_gnp	theta_p	theta_s	true_value

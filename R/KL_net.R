@@ -29,7 +29,7 @@
 #' )
 #'
 #' @export
-KL_net <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRUE, mech_net, mech_args, lstat, lapply_opt = TRUE, ds_return = FALSE, pmf = NULL){
+KL_net <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRUE, mech_net, mech_args, lstat, lapply_opt = TRUE, ds_return = FALSE, pmf = NULL, type = "log"){
 
   stopifnot(is.numeric(n))
   stopifnot(n %% 1 == 0)
@@ -58,7 +58,7 @@ KL_net <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRU
   y1 <- aapply(g, function(x){x$stat}) %>% rowMeans()
 
   stopifnot(length(y1) == length(theta_s))
-  y2 <- mean(sapply(ds, number_of_graphs_dd, sorted = sorted, type = "log"))
+  y2 <- mean(sapply(ds, number_of_graphs_dd, sorted = sorted, type = type))
 
   entropy <- entropy_calc(ds, hash = TRUE)
 

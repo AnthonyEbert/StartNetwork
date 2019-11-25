@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Anthony Ebert" />
+
+
+<title>Recap</title>
+
+<script src="log-file_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="log-file_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="log-file_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="log-file_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="log-file_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="log-file_files/navigation-1.1/tabsets.js"></script>
+<link href="log-file_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="log-file_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Recap</h1>
+<h4 class="author">Anthony Ebert</h4>
+<h4 class="date">25/11/2019</h4>
+
+</div>
+
+
+<pre class="r"><code>library(StartNetwork)
+library(parallel)
+library(ggplot2)
+
+sessionInfo()</code></pre>
+<pre><code>## R version 3.6.1 (2019-07-05)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Ubuntu 18.04.3 LTS
+## 
+## Matrix products: default
+## BLAS:   /usr/lib/x86_64-linux-gnu/openblas/libblas.so.3
+## LAPACK: /usr/lib/x86_64-linux-gnu/libopenblasp-r0.2.20.so
+## 
+## locale:
+##  [1] LC_CTYPE=en_AU.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_AU.UTF-8        LC_COLLATE=en_AU.UTF-8    
+##  [5] LC_MONETARY=en_AU.UTF-8    LC_MESSAGES=en_AU.UTF-8   
+##  [7] LC_PAPER=en_AU.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_AU.UTF-8 LC_IDENTIFICATION=C       
+## 
+## attached base packages:
+## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
+## [8] base     
+## 
+## other attached packages:
+## [1] ggplot2_3.2.0      StartNetwork_0.5.1
+## 
+## loaded via a namespace (and not attached):
+##  [1] igraph_1.2.4.1   Rcpp_1.0.2       knitr_1.23       magrittr_1.5    
+##  [5] tidyselect_0.2.5 munsell_0.5.0    colorspace_1.4-1 R6_2.4.0        
+##  [9] rlang_0.4.0      dplyr_0.8.3      stringr_1.4.0    tools_3.6.1     
+## [13] grid_3.6.1       gtable_0.3.0     xfun_0.8         withr_2.1.2     
+## [17] htmltools_0.3.6  assertthat_0.2.1 yaml_2.2.0       lazyeval_0.2.2  
+## [21] digest_0.6.20    tibble_2.1.3     crayon_1.3.4     purrr_0.3.2     
+## [25] glue_1.3.1.9000  evaluate_0.14    rmarkdown_1.14   stringi_1.4.3   
+## [29] compiler_3.6.1   pillar_1.4.2     scales_1.0.0     pkgconfig_2.0.2</code></pre>
+<div id="tests" class="section level1">
+<h1>Tests</h1>
+<div id="entropy" class="section level2">
+<h2>Entropy</h2>
+<p>We compare entropy computed with the non-parameter estimator <code>entropy_calc</code> using samples from the binomial distribution, with the analytic expression for the limit of entropy for the binomial distribution. The same comparison is also made with the Poisson distribution.</p>
+<pre class="r"><code>x &lt;- rbinom(10000, 1000, 0.9)
+entropy_calc(x)</code></pre>
+<pre><code>## [1] 3.688158</code></pre>
+<pre class="r"><code>1/2 * log(2*pi*exp(1)*1000*0.9*0.1)</code></pre>
+<pre><code>## [1] 3.668843</code></pre>
+<pre class="r"><code>lambda &lt;- 50
+x &lt;- rpois(1000, lambda)
+entropy_calc(x)</code></pre>
+<pre><code>## [1] 3.376926</code></pre>
+<pre class="r"><code>k &lt;- 1:100
+lambda * (1 - log(lambda)) + exp(-lambda) * sum((lambda^k * lfactorial(k))/factorial(k))</code></pre>
+<pre><code>## [1] 3.373266</code></pre>
+</div>
+<div id="combinations-of-degree-sequences" class="section level2">
+<h2>Combinations of degree sequences</h2>
+<div id="disjoint-edges" class="section level3">
+<h3>Disjoint edges</h3>
+<pre class="r"><code>disjoint &lt;- choose(choose(seq(15, 7, by = -2),2), 1)
+x &lt;- cumsum(log(disjoint[1:5]))
+
+disjoint_dd &lt;- function(x, type = &quot;log&quot;, n = 15){
+  number_of_graphs_dd(c(rep(0,n - 2*x), rep(1, 2*x)), type = type)
+}
+
+y0 &lt;- sapply(1:5, disjoint_dd)
+y1 &lt;- sapply(1:5, disjoint_dd, type = &quot;log1&quot;)</code></pre>
+<pre class="r"><code>par(pty=&quot;s&quot;)
+
+plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1)
+points(x, y1, col = &quot;red&quot;)
+abline(c(0,1), col = &quot;blue&quot;)</code></pre>
+<p><img src="log-file_files/figure-html/disjoint-plot-1.png" width="672" /></p>
+<pre class="r"><code>plot(x, y0 - x, xlim = c(0, 20), ylim = c(-6, 6))
+points(x, y1 - x, col = &quot;red&quot;)</code></pre>
+<p><img src="log-file_files/figure-html/disjoint-plot-2.png" width="672" /></p>
+</div>
+</div>
+<div id="single-triangle" class="section level2">
+<h2>Single triangle</h2>
+<pre class="r"><code>n &lt;- seq(5, 15, by = 2)
+#onetriangle &lt;- choose(choose(n,2), 1) * (n - 2)
+onetriangle &lt;- choose(n,3)
+x &lt;- log(onetriangle[1:6])
+
+triangle_dd &lt;- function(x, type = &quot;log&quot;, n = 15){
+  number_of_graphs_dd(c(rep(0,x - 3), c(2,2,2)), type = type)
+}
+
+y0 &lt;- sapply(n, triangle_dd)
+y1 &lt;- sapply(n, triangle_dd, type = &quot;log1&quot;)</code></pre>
+<pre class="r"><code>par(pty=&quot;s&quot;)
+
+plot(x, y0, xlim = c(0, 10), ylim = c(0, 10), asp = 1)
+points(x, y1, col = &quot;red&quot;, asp = 1)
+abline(c(0,1), col = &quot;blue&quot;)</code></pre>
+<p><img src="log-file_files/figure-html/single-triangle-plot-1.png" width="672" /></p>
+<pre class="r"><code>plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
+points(n, y1 - x, col = &quot;red&quot;, asp = 1)</code></pre>
+<p><img src="log-file_files/figure-html/single-triangle-plot-2.png" width="672" /></p>
+</div>
+<div id="single-reverse-triangle" class="section level2">
+<h2>Single reverse triangle</h2>
+<pre class="r"><code>n &lt;- seq(5, 15, by = 2)
+#onetriangle &lt;- choose(choose(n,2), 1) * (n - 2)
+onetriangle &lt;- choose(n,3)
+x &lt;- log(onetriangle[1:6])
+
+triangle_dd &lt;- function(x, type = &quot;log&quot;){
+  number_of_graphs_dd(c(rep(x - 1 - 3,x - 3), c(0,0,0)), type = type)
+}
+
+y0 &lt;- sapply(n, triangle_dd)
+y1 &lt;- sapply(n, triangle_dd, type = &quot;log1&quot;)</code></pre>
+<pre class="r"><code>par(pty=&quot;s&quot;)
+
+plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1)
+points(x, y1, col = &quot;red&quot;, asp = 1)
+abline(c(0,1), col = &quot;blue&quot;)</code></pre>
+<p><img src="log-file_files/figure-html/reverse-triangle-plot-1.png" width="672" /></p>
+<pre class="r"><code>plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
+points(n, y1 - x, col = &quot;red&quot;, asp = 1)</code></pre>
+<p><img src="log-file_files/figure-html/reverse-triangle-plot-2.png" width="672" /></p>
+<p>It seems that the base measure for the sorted degree sequence is more accurately measured for spare graphs than dense graphs. Let’s look now at graphs in the middle, regular graphs where the degree is n/2.</p>
+</div>
+<div id="regular-graph" class="section level2">
+<h2>Regular graph</h2>
+<p>The analytic expression for the number of regular graphs is reported by <span class="citation">McKay and Wormald (1991)</span>.</p>
+<pre class="r"><code>n &lt;- seq(6, 20, by = 2)
+#onetriangle &lt;- choose(choose(n,2), 1) * (n - 2)
+d &lt;- n / 2
+lambda &lt;- d / (n - 1)
+
+regulargraphs &lt;- sqrt(2) * exp(0.25) * (lambda^lambda * (1-lambda)^(1-lambda))^choose(n,2) * (choose(n-1,d)^n)
+x &lt;- log(regulargraphs)
+
+regular_dd &lt;- function(x, type = &quot;log&quot;){
+  number_of_graphs_dd(rep(x/2,x), type = type)
+}
+
+y0 &lt;- sapply(n, regular_dd)
+y1 &lt;- sapply(n, regular_dd, type = &quot;log1&quot;)</code></pre>
+<pre class="r"><code>par(pty=&quot;s&quot;)
+
+plot(x, y0, xlim = c(0, 110), ylim = c(0, 110), asp = 1)
+points(x, y1, col = &quot;red&quot;, asp = 1)
+abline(c(0,1), col = &quot;blue&quot;)</code></pre>
+<p><img src="log-file_files/figure-html/regular-graph-plot-1.png" width="672" /></p>
+<pre class="r"><code>plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
+points(n, y1 - x, col = &quot;red&quot;, asp = 1)</code></pre>
+<p><img src="log-file_files/figure-html/regular-graph-plot-2.png" width="672" /></p>
+</div>
+</div>
+<div id="examples" class="section level1">
+<h1>Examples</h1>
+<pre class="r"><code>n = 15
+replicates = 400</code></pre>
+<div id="example-1" class="section level2">
+<h2>Example 1</h2>
+<p>Mechanistic model: GNP<br />
+Network model: ERGM<br />
+Integral stat: sorted degree sequence<br />
+Likelihood stat: number of edges</p>
+<pre class="r"><code>mech_net_gnp = function(p, n, args){
+  args$p = p;
+  args$n = n;
+  do.call(igraph::sample_gnp, args)
+}
+
+mech_args_gnp = list(directed = FALSE)
+
+lstat = function(x){igraph::gsize(x)}
+
+true_value &lt;- 0.1
+theta_p &lt;- rep(seq(0.01, 0.2, by = 0.01), 5)
+theta_s &lt;- log(true_value/(1 - true_value))
+
+cl &lt;- makeCluster(detectCores())
+
+g &lt;- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, type = &quot;log&quot;)
+
+stopCluster(cl)</code></pre>
+<pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 1&quot;) + geom_vline(xintercept = true_value)</code></pre>
+<p><img src="log-file_files/figure-html/example1-processing-1.png" width="672" /></p>
+</div>
+<div id="example-2" class="section level2">
+<h2>Example 2</h2>
+<p>Mechanistic model: GNP<br />
+Network model: ERGM<br />
+Integral stat: sorted degree sequence<br />
+Likelihood stat: number of edges</p>
+<pre class="r"><code>mech_net_gnp = function(p, n, args){
+  args$p = p;
+  args$n = n;
+  do.call(igraph::sample_gnp, args)
+}
+
+mech_args_gnp = list(directed = FALSE)
+
+lstat = function(x){igraph::gsize(x)}
+
+true_value &lt;- 0.9
+theta_p &lt;- rep(seq(0.80, 0.99, by = 0.01), 5)
+theta_s &lt;- log(true_value/(1 - true_value))
+
+cl &lt;- makeCluster(detectCores())
+
+g &lt;- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, type = &quot;log1&quot;)
+
+df &lt;- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 2&quot;) + geom_vline(xintercept = true_value)</code></pre>
+<p><img src="log-file_files/figure-html/example2-1.png" width="672" /></p>
+<pre class="r"><code>stopCluster(cl)</code></pre>
+</div>
+</div>
+<div id="bibliography" class="section level1 unnumbered">
+<h1>Bibliography</h1>
+<div id="refs" class="references">
+<div id="ref-mckay1991asymptotic">
+<p>McKay, Brendan D, and Nicholas C Wormald. 1991. “Asymptotic Enumeration by Degree Sequence of Graphs with Degreeso (N 1/2).” <em>Combinatorica</em> 11 (4). Springer: 369–82.</p>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

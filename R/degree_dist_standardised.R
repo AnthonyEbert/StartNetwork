@@ -76,6 +76,10 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, type = 0){
     output <- double_factorial(mean(x)*n) *
       exp(-0.25 * (mean(x^2)/mean(x))^2) /
       prod(factorial(x))
+  } else if(type == "log1"){
+    output <- ldouble_factorial(mean(x)*n) +
+      (-0.25 * (mean(x ^ 2)/mean(x))^2) -
+      sum(lfactorial(x))
   } else if(type == 2){
     kbar <- mean(x)
     sigma2 <- mean((x/(kbar - 1))^2)
@@ -109,8 +113,8 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, type = 0){
 
   if(sorted){
     size_factor <- arrangements::npermutations(k = length(x), freq = as.numeric(table(x)), bigz = bigz)
-    if(type != "log"){
-      output <- output * size_factor
+    if(substr(type, 1, 3) != "log"){
+      output <- output * gmp::asNumeric(size_factor)
     } else {
       output <- output + gmp::log.bigz(size_factor)
     }
