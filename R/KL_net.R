@@ -44,7 +44,7 @@ KL_net <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRU
     g <- lapply(rep(theta_m, replicates), func, mech_net = mech_net, lstat = lstat, n = n, args = mech_args)
   } else if(!lapply_opt){
     g <- mech_net(theta_m, n, mech_args, nsim = replicates)
-    g <- purrr::map(g, purrr::compose(function(x){list(degree = as.numeric(igraph::degree(x)) / 2, stat = lstat(x))}, igraph::graph_from_adjacency_matrix, network::as.matrix.network.adjacency), mode = "undirected")
+    g <- purrr::map(g, purrr::compose(function(x){list(degree = as.numeric(igraph::degree(x)), stat = lstat(x))}, purrr::partial(igraph::graph.adjacency, mode = "undirected"), network::as.matrix.network.adjacency))
   }
 
 

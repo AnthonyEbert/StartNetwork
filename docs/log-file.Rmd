@@ -12,7 +12,7 @@ bibliography: link.bib
 knitr::opts_chunk$set(echo = TRUE, cache = TRUE, cache.rebuild = TRUE, autodep = TRUE)
 ```
 
-```{r libraries, cache = FALSE}
+```{r libraries, cache = TRUE}
 set.seed(1)
 
 library(StartNetwork)
@@ -30,7 +30,7 @@ Here we test the functions used to estimate entropy and estimate the number of g
 
 We compare entropy computed with the non-parameter estimator `entropy_calc` using samples from the binomial distribution, with the analytic expression for the limit of entropy for the binomial distribution. The same comparison is also made with the Poisson distribution. 
 
-```{r entropy, cache = FALSE}
+```{r entropy, cache = TRUE, dependson="libraries"}
 x <- rbinom(10000, 1000, 0.9)
 entropy_calc(x)
 
@@ -46,11 +46,13 @@ lambda * (1 - log(lambda)) + exp(-lambda) * sum((lambda^k * lfactorial(k))/facto
 
 ## Combinations of degree sequences
 
-### Disjoint edges
+We check whether we are counting the space of graphs correctly. Firstly, we look at graphs where the degrees of the nodes are either zero or one, where the number of nodes with degree one is even. This means that network consists only of disconnected dyads. 
 
-```{r disjoint}
-disjoint <- choose(choose(seq(15, 7, by = -2),2), 1)
-x <- cumsum(log(disjoint[1:5]))
+### Disconnected dyads 
+
+```{r disjoint, dependson="libraries"}
+disconnected_dyad <- choose(choose(seq(15, 7, by = -2),2), 1)
+x <- cumsum(log(disconnected_dyad))
 
 disjoint_dd <- function(x, n = 15){
   number_of_graphs_dd(c(rep(0,n - 2*x), rep(1, 2*x)))
@@ -59,7 +61,7 @@ disjoint_dd <- function(x, n = 15){
 y0 <- sapply(1:5, disjoint_dd)
 ```
 
-```{r disjoint-plot}
+```{r disjoint-plot, dependson="disjoint"}
 par(pty="s")
 
 plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1)
@@ -70,20 +72,20 @@ abline(c(0,1), col = "blue")
 
 ## Single triangle
 
-```{r single-triangle}
+```{r single-triangle, dependson="libraries"}
 n <- seq(5, 15, by = 2)
 #onetriangle <- choose(choose(n,2), 1) * (n - 2)
 onetriangle <- choose(n,3)
 x <- log(onetriangle[1:6])
 
-triangle_dd <- function(x, n = 15){
+triangle_dd <- function(x){
   number_of_graphs_dd(c(rep(0,x - 3), c(2,2,2)))
 }
 
 y0 <- sapply(n, triangle_dd)
 ```
 
-```{r single-triangle-plot}
+```{r single-triangle-plot, dependson="single-triangle"}
 par(pty="s")
 
 plot(x, y0, xlim = c(0, 10), ylim = c(0, 10), asp = 1)
@@ -101,7 +103,7 @@ onetriangle <- choose(n,3)
 x <- log(onetriangle[1:6])
 
 triangle_dd <- function(x){
-  number_of_graphs_dd(c(rep(x - 1 - 3,x - 3), c(0,0,0)))
+  number_of_graphs_dd(c(rep(x - 1,x - 3), rep(x - 1 - 2, 3)))
 }
 
 y0 <- sapply(n, triangle_dd)
@@ -123,9 +125,9 @@ It seems that the base measure for the sorted degree sequence is more accurately
 The analytic expression for the number of regular graphs is reported by @mckay1991asymptotic. 
 
 ```{r regular-graph}
-n <- seq(6, 20, by = 2)
+n <- seq(7, 21, by = 2)
 #onetriangle <- choose(choose(n,2), 1) * (n - 2)
-d <- n / 2
+d <- (n - 1) / 2
 lambda <- d / (n - 1)
 
 regulargraphs <- sqrt(2) * exp(0.25) * (lambda^lambda * (1-lambda)^(1-lambda))^choose(n,2) * (choose(n-1,d)^n)
@@ -141,7 +143,7 @@ y0 <- sapply(n, regular_dd)
 ```{r regular-graph-plot}
 par(pty="s")
 
-plot(x, y0, xlim = c(0, 110), ylim = c(0, 110), asp = 1)
+plot(x, y0, xlim = c(0, 180), ylim = c(0, 180), asp = 1)
 abline(c(0,1), col = "blue")
 
 # plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
@@ -165,7 +167,7 @@ Network model: ERGM
 Integral stat: sorted degree sequence  
 Likelihood stat: number of edges
 
-```{r example1, cache=TRUE, eval = TRUE}
+```{r example1, cache=TRUE, eval = TRUE, dependson=c("libraries", "metaparameters")}
 mech_net_gnp = function(p, n, args){
   args$p = p;
   args$n = n;
@@ -187,7 +189,7 @@ g <- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_ne
 stopCluster(cl)
 ```
 
-```{r example1-plot, eval = TRUE}
+```{r example1-plot, eval = TRUE, dependson = "example1"}
 df <- data.frame(parameter = theta_p, KL = g)
 
 ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 1") + geom_vline(xintercept = true_value)
@@ -200,7 +202,7 @@ Network model: ERGM
 Integral stat: sorted degree sequence  
 Likelihood stat: number of edges
 
-```{r example2, cache=TRUE, eval = TRUE}
+```{r example2, cache=TRUE, eval = TRUE, dependson=c("libraries", "metaparameters")}
 mech_net_gnp = function(p, n, args){
   args$p = p;
   args$n = n;
@@ -222,7 +224,7 @@ g <- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_ne
 stopCluster(cl)
 ```
 
-```{r example2-plot}
+```{r example2-plot, dependson = "example2"}
 df <- data.frame(parameter = theta_p, KL = g)
 
 ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 2") + geom_vline(xintercept = true_value)
@@ -232,6 +234,7 @@ Since we have found the space of dense graphs is counted inaccurately when the e
 $$
 d^* = n - d - 1
 $$
+
 
 ## Example 3
 
@@ -268,7 +271,99 @@ df <- data.frame(parameter = theta_p, KL = g)
 ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 3") + geom_vline(xintercept = true_value)
 ```
 
-We have successfully retrieved the parameter for a dense graph. 
+We have successfully retrieved the parameter for a dense graph. To check
+
+## Single reverse triangle (mirrored degree sequence)
+
+```{r reverse-triangle2}
+n <- seq(5, 15, by = 2)
+#onetriangle <- choose(choose(n,2), 1) * (n - 2)
+onetriangle <- choose(n,3)
+x <- log(onetriangle[1:6])
+
+triangle_dd <- function(x){
+  number_of_graphs_dd(c(rep(x - 1,x - 3), rep(x - 1 - 2, 3)), mirror = TRUE)
+}
+
+ym <- sapply(n, triangle_dd)
+```
+
+```{r reverse-triangle2-plot}
+par(pty="s")
+
+plot(x, ym, xlim = c(0, 20), ylim = c(0, 20), asp = 1)
+abline(c(0,1), col = "blue")
+
+# plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
+```
+
+```{r example4, cache=TRUE, eval = TRUE}
+n <- 6
+replicates <- 400
+
+library(ergm)
+library(StartNetwork)
+
+mech_net_gnp = function(p, n, args, nsim = 1){
+  ergg <- ergm::simulate_formula(network::network(n, directed = FALSE) ~ edges, coef = log(p/(1-p)), nsim = nsim)
+  return(ergg)
+}
+
+mech_args_gnp = list(directed = FALSE)
+
+lstat = function(x){igraph::gsize(x)}
+
+true_value <- 0.9
+theta_p <- rep(seq(0.80, 0.99, by = 0.01), 5)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = TRUE, lapply_opt = FALSE)
+
+parallel::stopCluster(cl)
+```
+
+```{r example4-plot}
+df <- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 4") + geom_vline(xintercept = true_value)
+```
+
+```{r example5, cache=TRUE, eval = TRUE}
+n <- 6
+replicates <- 400
+
+library(ergm)
+library(StartNetwork)
+library(parallel)
+
+mech_net_gnp = function(p, n, args, nsim = 1){
+  ergg <- ergm::simulate_formula(network::network(n, directed = FALSE) ~ edges, coef = log(p/(1-p)), nsim = nsim, control = ergm::control.simulate.formula.ergm(MCMC.prop.weights = "random", MCMC.interval = 4000, MCMC.burnin = 50000, MCMC.init.maxedges = 10), sequential = TRUE)
+  return(ergg)
+}
+
+mech_args_gnp = list(directed = FALSE)
+
+lstat = function(x){igraph::gsize(x)}
+
+true_value <- 0.1
+theta_p <- rep(seq(0.01, 0.2, by = 0.01), 5)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+parallel::clusterSetRNGStream(cl, 123)
+
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = TRUE, lapply_opt = FALSE)
+
+parallel::stopCluster(cl)
+```
+
+```{r example5-plot}
+df <- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 5") + geom_vline(xintercept = true_value)
+```
 
 # Bibliography
 

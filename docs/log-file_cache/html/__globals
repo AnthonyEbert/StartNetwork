@@ -14,3 +14,11 @@ example1-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	paramet
 example2-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
 example3	::	$<-	detectCores	do.call	KL_net	list	log	makeCluster	n	parSapply	rep	replicates	seq	stopCluster
 example3-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
+reverse-triangle2	c	choose	log	number_of_graphs_dd	rep	sapply	seq
+reverse-triangle2-plot	abline	c	par	plot	x	ym
+libraries	library	sessionInfo	set.seed
+example4	::	~	library	list	log	rep	return	seq
+example4-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
+entropy	^	entropy_calc	exp	factorial	lfactorial	log	pi	rbinom	rpois	sum
+example5	::	~	library	list	log	rep	return	seq
+example5-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value

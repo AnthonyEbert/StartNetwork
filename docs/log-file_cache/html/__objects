@@ -1,4 +1,4 @@
-disjoint	disjoint	disjoint_dd	x	y0
+disjoint	disconnected_dyad	disjoint_dd	x	y0
 disjoint-plot	
 single-triangle	n	onetriangle	triangle_dd	x	y0
 single-triangle-plot	
@@ -14,3 +14,11 @@ example1-plot	df
 example2-plot	df
 example3	cl	g	lstat	mech_args_gnp	mech_net_gnp	theta_p	theta_s	true_value
 example3-plot	df
+reverse-triangle2	n	onetriangle	triangle_dd	x	ym
+reverse-triangle2-plot	
+libraries	
+example4	cl	g	lstat	mech_args_gnp	mech_net_gnp	n	replicates	theta_p	theta_s	true_value
+example4-plot	df
+entropy	k	lambda	x
+example5	cl	g	lstat	mech_args_gnp	mech_net_gnp	n	replicates	theta_p	theta_s	true_value
+example5-plot	df
