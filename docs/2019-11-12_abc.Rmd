@@ -1,0 +1,117 @@
+---
+title: "ABC sampler test"
+output: pdf_document
+---
+
+I test the parameters of the BA model as a mechanistic model against the ERGM shown in the meeting yesterday. The ERGM (21 nodes) has two summary statistics in its likelihood: number of 6-stars and number of triangles, its true parameters are $\theta = (3.5, 0.02)$. The BA model parameter is $m$, the number of nodes added at each iteration. The KL divergence computation told us that $m = 6$ is the optimum parameter. 
+
+I drew 1000 realisations from this ERGM and used the combination of statistics which occur most frequently as the data, 17 6stars and 44 triangles. 
+
+```{r, echo = FALSE}
+set.seed(1)
+
+n <- 21
+theta <- c(3.5, 0.02)
+
+x <- ergm::simulate_formula(
+  network::network(n, directed = FALSE) ~ degree(6) + triangles, 
+  coef = theta, 
+  output = "stats", 
+  nsim = 1000
+)
+
+plot(x)
+
+mode_obs <- which.max(acetools::mtable(x))
+
+x_obs <- as.numeric(x[mode_obs,])
+
+x_obs
+```
+
+The first distance I used was a Euclidean distance on the two summary statistics. The second distance is a weighted difference between the summary statistics (to approximate what our KL divergence procedure targets). As you can see below, the best estimator for the first distance is 3, and the best estimator for the second distance is 6 (which is what we found with the KL divergence). The parameter we found from the KL procedure, $m = 6$ doesn't minimise the difference between summary statistics, it minimises the difference in the sum of parameters and statistics used in the ERGM model.  
+
+$$
+\begin{aligned}
+\text{distance}_1 &:= \sqrt{(S_{\text{obs},1} - S_{\text{sim},1})^2 + (S_{\text{obs},2} - S_{\text{sim},2})^2} \\
+\text{distance}_2 &:= \theta_1 (S_{\text{obs},1} - S_{\text{sim},1}) + \theta_2 (S_{\text{obs},2} - S_{\text{sim},2})
+\end{aligned}
+$$
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(protoABC)
+library(parallel)
+library(ggplot2)
+library(dplyr)
+
+set.seed(1)
+
+cl <- makeCluster(detectCores())
+
+n <- 21
+theta <- c(3.5, 0.02)
+
+x <- ergm::simulate_formula(network::network(n, directed = FALSE) ~ degree(6) + triangles, coef = theta, output = "stats", nsim = 1000)
+
+x_obs <- as.numeric(apply(x, 2, mean))
+
+distance_fun <- function(theta, inp){
+  sim <- igraph::sample_pa(inp$n, m = theta, directed = FALSE)
+  star6 <- sum(igraph::degree(sim) == 6)
+  triangles <- length(igraph::triangles(sim))/3
+  dist_out <- sqrt(sum((inp$x_obs - c(star6, triangles))^2))
+  return(dist_out)
+}
+
+distance_fun2 <- function(theta, inp){
+  sim <- igraph::sample_pa(inp$n, m = theta, directed = FALSE)
+  star6 <- sum(igraph::degree(sim) == 6)
+  triangles <- length(igraph::triangles(sim))/3
+  dist_out <- sum((inp$x_obs - c(star6, triangles)) * inp$true)
+  return(dist_out)
+}
+
+library(protoABC)
+
+inp <- list(
+  n = n,
+  x_obs = x_obs,
+  true = theta
+)
+
+prior <- function(n){data.frame(m = sample(1:10, size = n, replace = TRUE))}
+
+abc_post_1 <- abc_start(
+  prior,
+  distance_fun,
+  inp,
+  method = "rejection",
+  control = list(epsilon = 20, n = 500),
+  cl = cl
+)
+
+int_breaks <- function(x, n = 5) pretty(x, n)[pretty(x, n) %% 1 == 0]
+
+abc_post_1$distance <- "Euclidean (distance 1)"
+
+abc_post_2 <- abc_start(
+  prior,
+  distance_fun2,
+  inp,
+  method = "rejection",
+  control = list(epsilon = 35, n = 500),
+  cl = cl
+)
+
+abc_post_2$distance <- "Weighted difference (distance 2)"
+
+abc_post <- dplyr::bind_rows(abc_post_1, abc_post_2)
+
+ggplot(abc_post) +
+  aes(x = m, col = distance) +
+  geom_histogram(aes(y = ..prop..), stat = "count", fill = NA, width = 0) +
+  scale_x_continuous(breaks= 1:10, limits = c(1,10)) +
+  scale_y_continuous(expand = expand_scale(c(0,0),c(0,0.1))) +
+  ggthemes::theme_few() +
+  ylab("ABC posterior")
+```
