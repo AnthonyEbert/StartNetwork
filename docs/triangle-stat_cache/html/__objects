@@ -6,3 +6,5 @@ triangles2-plot	df
 session	
 triangles3	cl	g	mech_net_triangles	theta_p	theta_s	true_value
 triangles3-plot	df
+triangles4	cl	g	mech_net_triangles	n	replicates	theta_p	theta_s	true_value
+triangles4-plot	df

@@ -202,6 +202,7 @@ summary {
 <li><a href="#triangles-1">Triangles 1</a></li>
 <li><a href="#triangles-2">Triangles 2</a></li>
 <li><a href="#triangles-3">Triangles 3</a></li>
+<li><a href="#triangles-4">Triangles 4</a></li>
 </ul>
 </div>
 
@@ -266,6 +267,26 @@ parallel::stopCluster(cl)</code></pre>
 
 ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 3&quot;) + geom_vline(xintercept = true_value)</code></pre>
 <p><img src="triangle-stat_files/figure-html/triangles3-plot-1.png" width="672" /></p>
+</div>
+<div id="triangles-4" class="section level2">
+<h2>Triangles 4</h2>
+<pre class="r"><code>n &lt;- 25
+replicates &lt;- 1000
+mech_net_triangles &lt;- purrr::partial(mech_net_triangles_n, n = !!n)
+
+true_value &lt;- 0.3
+theta_p &lt;- rep(seq(0.25, 0.35, by = 0.05), 5)
+theta_s &lt;- log(true_value/(1 - true_value))
+
+cl &lt;- parallel::makeCluster(parallel::detectCores())
+
+g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE)
+
+parallel::stopCluster(cl)</code></pre>
+<pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 4&quot;) + geom_vline(xintercept = true_value)</code></pre>
+<p><img src="triangle-stat_files/figure-html/triangles4-plot-1.png" width="672" /></p>
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>## R version 3.6.1 (2019-07-05)
 ## Platform: x86_64-pc-linux-gnu (64-bit)

@@ -11,7 +11,7 @@ bibliography: link.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE, cache.rebuild = TRUE, autodep = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, cache.rebuild = FALSE, autodep = TRUE)
 ```
 
 ```{r libraries, cache = TRUE}
@@ -89,6 +89,30 @@ parallel::stopCluster(cl)
 df <- data.frame(parameter = theta_p, KL = g)
 
 ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 3") + geom_vline(xintercept = true_value)
+```
+
+## Triangles 4
+
+```{r triangles4}
+n <- 25
+replicates <- 1000
+mech_net_triangles <- purrr::partial(mech_net_triangles_n, n = !!n)
+
+true_value <- 0.3
+theta_p <- rep(seq(0.25, 0.35, by = 0.05), 5)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE)
+
+parallel::stopCluster(cl)
+```
+
+```{r triangles4-plot, eval = TRUE}
+df <- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 4") + geom_vline(xintercept = true_value)
 ```
 
 ```{r session}
