@@ -1,15 +1,17 @@
 ---
-title: "Recap"
+title: "Update"
 author: "Anthony Ebert"
-date: "25/11/2019"
+date: "04/12/2019"
 output: 
   html_document:
+    toc: true
     self_contained: false
+    code_folding: hide
 bibliography: link.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE, cache.rebuild = TRUE, autodep = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, cache.rebuild = FALSE, autodep = TRUE)
 ```
 
 ```{r libraries, cache = TRUE}
@@ -18,8 +20,6 @@ set.seed(1)
 library(StartNetwork)
 library(parallel)
 library(ggplot2)
-
-sessionInfo()
 ```
 
 # Tests
@@ -64,7 +64,7 @@ y0 <- sapply(1:5, disjoint_dd)
 ```{r disjoint-plot, dependson="disjoint"}
 par(pty="s")
 
-plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1)
+plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1, xlab = "analytic expression", ylab = "general estimator")
 abline(c(0,1), col = "blue")
 
 # plot(x, y0 - x, xlim = c(0, 20), ylim = c(-6, 6))
@@ -88,7 +88,7 @@ y0 <- sapply(n, triangle_dd)
 ```{r single-triangle-plot, dependson="single-triangle"}
 par(pty="s")
 
-plot(x, y0, xlim = c(0, 10), ylim = c(0, 10), asp = 1)
+plot(x, y0, xlim = c(0, 10), ylim = c(0, 10), asp = 1, xlab = "analytic expression", ylab = "general estimator")
 abline(c(0,1), col = "blue")
 
 # plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
@@ -112,7 +112,7 @@ y0 <- sapply(n, triangle_dd)
 ```{r reverse-triangle-plot}
 par(pty="s")
 
-plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1)
+plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1, xlab = "analytic expression", ylab = "general estimator")
 abline(c(0,1), col = "blue")
 
 # plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
@@ -143,7 +143,7 @@ y0 <- sapply(n, regular_dd)
 ```{r regular-graph-plot}
 par(pty="s")
 
-plot(x, y0, xlim = c(0, 180), ylim = c(0, 180), asp = 1)
+plot(x, y0, xlim = c(0, 180), ylim = c(0, 180), asp = 1, xlab = "analytic expression", ylab = "general estimator")
 abline(c(0,1), col = "blue")
 
 # plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
@@ -158,38 +158,32 @@ We demonstrate the application of these formulas with a simple example. The mech
 ```{r metaparameters, cache = TRUE}
 n = 15
 replicates = 400
+
+mech_net_gnp = purrr::partial(igraph::sample_gnp, n = !!n, ... = , directed = FALSE, loops = FALSE)
 ```
 
 ## Example 1
 
-Mechanistic model: GNP  
-Network model: ERGM  
+Mechanistic model: Erdös-Renyi (target)  
+Statistical model: ERGM  
 Integral stat: sorted degree sequence  
 Likelihood stat: number of edges
 
 ```{r example1, cache=TRUE, eval = TRUE, dependson=c("libraries", "metaparameters")}
-mech_net_gnp = function(p, n, args){
-  args$p = p;
-  args$n = n;
-  do.call(igraph::sample_gnp, args)
-}
-
-mech_args_gnp = list(directed = FALSE)
-
-lstat = function(x){igraph::gsize(x)}
-
 true_value <- 0.1
 theta_p <- rep(seq(0.01, 0.2, by = 0.01), 5)
 theta_s <- log(true_value/(1 - true_value))
 
-cl <- makeCluster(detectCores())
+cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = FALSE)
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize)
 
-stopCluster(cl)
+parallel::stopCluster(cl)
 ```
 
 ```{r example1-plot, eval = TRUE, dependson = "example1"}
+library(ggplot2)
+
 df <- data.frame(parameter = theta_p, KL = g)
 
 ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 1") + geom_vline(xintercept = true_value)
@@ -197,37 +191,52 @@ ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + gg
 
 ## Example 2
 
-Mechanistic model: GNP  
-Network model: ERGM  
+Mechanistic model: Erdös-Renyi (target)  
+Statistical model: ERGM  
 Integral stat: sorted degree sequence  
 Likelihood stat: number of edges
 
 ```{r example2, cache=TRUE, eval = TRUE, dependson=c("libraries", "metaparameters")}
-mech_net_gnp = function(p, n, args){
-  args$p = p;
-  args$n = n;
-  do.call(igraph::sample_gnp, args)
-}
-
-mech_args_gnp = list(directed = FALSE)
-
-lstat = function(x){igraph::gsize(x)}
-
 true_value <- 0.9
 theta_p <- rep(seq(0.80, 0.99, by = 0.01), 5)
 theta_s <- log(true_value/(1 - true_value))
 
-cl <- makeCluster(detectCores())
+cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = FALSE)
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize)
 
-stopCluster(cl)
+parallel::stopCluster(cl)
 ```
 
-```{r example2-plot, dependson = "example2"}
+```{r example2-plot, dependson = "example2", eval = TRUE}
 df <- data.frame(parameter = theta_p, KL = g)
 
 ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 2") + geom_vline(xintercept = true_value)
+```
+
+## Example 3
+
+Mechanistic model: Erdös-Renyi (target)  
+Statistical model: ERGM  
+Integral stat: sorted degree sequence  
+Likelihood stat: number of edges
+
+```{r example3, cache=TRUE, eval = TRUE, dependson=c("libraries", "metaparameters")}
+true_value <- 0.5
+theta_p <- rep(seq(0.3, 0.7, by = 0.01), 5)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = FALSE)
+
+parallel::stopCluster(cl)
+```
+
+```{r example3-plot, dependson = "example2", eval = TRUE}
+df <- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 3") + geom_vline(xintercept = true_value)
 ```
 
 Since we have found the space of dense graphs is counted inaccurately when the equation of @bianconi2009entropy is naively applied, we map the space of dense graphs to the space of sparse graphs. In other words, we perform this simple conversion on the degree sequence:
@@ -236,39 +245,54 @@ d^* = n - d - 1
 $$
 
 
-## Example 3
+## Example 4
 
-Mechanistic model: GNP  
-Network model: ERGM  
+Mechanistic model: Erdös-Renyi (target)  
+Statistical model: ERGM  
 Integral stat: sorted degree sequence  
 Likelihood stat: number of edges
 
-```{r example3, cache=TRUE, eval = TRUE}
-mech_net_gnp = function(p, n, args){
-  args$p = p;
-  args$n = n;
-  do.call(igraph::sample_gnp, args)
-}
-
-mech_args_gnp = list(directed = FALSE)
-
-lstat = function(x){igraph::gsize(x)}
-
+```{r example4, cache=TRUE, eval = TRUE}
 true_value <- 0.9
 theta_p <- rep(seq(0.80, 0.99, by = 0.01), 5)
 theta_s <- log(true_value/(1 - true_value))
 
-cl <- makeCluster(detectCores())
+cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = TRUE)
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = TRUE)
 
-stopCluster(cl)
+parallel::stopCluster(cl)
 ```
 
-```{r example3-plot}
+```{r example4-plot, eval = TRUE}
 df <- data.frame(parameter = theta_p, KL = g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 3") + geom_vline(xintercept = true_value)
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 4") + geom_vline(xintercept = true_value)
+```
+
+## Example 5
+
+Mechanistic model: Erdös-Renyi (target)  
+Statistical model: ERGM  
+Integral stat: sorted degree sequence  
+Likelihood stat: number of edges
+
+```{r example5, cache=TRUE, eval = TRUE}
+true_value <- 0.5
+theta_p <- rep(seq(0.3, 0.7, by = 0.01), 5)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = TRUE)
+
+parallel::stopCluster(cl)
+```
+
+```{r example5-plot, eval = TRUE}
+df <- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 5") + geom_vline(xintercept = true_value)
 ```
 
 We have successfully retrieved the parameter for a dense graph. To check
@@ -291,27 +315,51 @@ ym <- sapply(n, triangle_dd)
 ```{r reverse-triangle2-plot}
 par(pty="s")
 
-plot(x, ym, xlim = c(0, 20), ylim = c(0, 20), asp = 1)
+plot(x, ym, xlim = c(0, 20), ylim = c(0, 20), asp = 1, xlab = "analytic expression", ylab = "general estimator")
 abline(c(0,1), col = "blue")
-
-# plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
 ```
 
-```{r example4, cache=TRUE, eval = TRUE}
-n <- 6
-replicates <- 400
+# ERGM as mechanistic models
 
-library(ergm)
-library(StartNetwork)
+## Example 6
 
-mech_net_gnp = function(p, n, args, nsim = 1){
-  ergg <- ergm::simulate_formula(network::network(n, directed = FALSE) ~ edges, coef = log(p/(1-p)), nsim = nsim)
-  return(ergg)
-}
+Mechanistic model: ERGM (target)  
+Statistical model: ERGM  
+Integral stat: sorted degree sequence  
+Likelihood stat: number of edges
+```{r example6, cache=TRUE, eval = TRUE}
+n <- 15
 
-mech_args_gnp = list(directed = FALSE)
+mech_net_ergm <- purrr::partial(mech_net_ergm_n, n = !!n)
 
-lstat = function(x){igraph::gsize(x)}
+true_value <- 0.1
+theta_p <- rep(seq(0.01, 0.2, by = 0.01), 5)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize)
+
+parallel::stopCluster(cl)
+```
+
+```{r example6-plot, eval = TRUE}
+df <- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 6") + geom_vline(xintercept = true_value)
+```
+
+## Example 7
+
+Mechanistic model: ERGM (target)  
+Statistical model: ERGM  
+Integral stat: sorted degree sequence  
+Likelihood stat: number of edges
+
+```{r example7, cache=TRUE, eval = TRUE}
+n <- 15
+
+mech_net_ergm <- purrr::partial(mech_net_ergm_n, n = !!n)
 
 true_value <- 0.9
 theta_p <- rep(seq(0.80, 0.99, by = 0.01), 5)
@@ -319,50 +367,48 @@ theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = TRUE, lapply_opt = FALSE)
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize, mirror = TRUE)
 
 parallel::stopCluster(cl)
 ```
 
-```{r example4-plot}
+```{r example7-plot, eval = TRUE}
 df <- data.frame(parameter = theta_p, KL = g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 4") + geom_vline(xintercept = true_value)
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 7") + geom_vline(xintercept = true_value)
 ```
 
-```{r example5, cache=TRUE, eval = TRUE}
-n <- 6
-replicates <- 400
+## Example 8
 
-library(ergm)
-library(StartNetwork)
-library(parallel)
+Mechanistic model: ERGM (target)  
+Statistical model: ERGM  
+Integral stat: sorted degree sequence  
+Likelihood stat: number of edges
 
-mech_net_gnp = function(p, n, args, nsim = 1){
-  ergg <- ergm::simulate_formula(network::network(n, directed = FALSE) ~ edges, coef = log(p/(1-p)), nsim = nsim, control = ergm::control.simulate.formula.ergm(MCMC.prop.weights = "random", MCMC.interval = 4000, MCMC.burnin = 50000, MCMC.init.maxedges = 10), sequential = TRUE)
-  return(ergg)
-}
+```{r example8, eval = TRUE}
+n <- 15
 
-mech_args_gnp = list(directed = FALSE)
+mech_net_ergm <- purrr::partial(mech_net_ergm_n, n = !!n)
 
-lstat = function(x){igraph::gsize(x)}
-
-true_value <- 0.1
-theta_p <- rep(seq(0.01, 0.2, by = 0.01), 5)
+true_value <- 0.5
+theta_p <- rep(seq(0.3, 0.7, by = 0.01), 5)
 theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
-parallel::clusterSetRNGStream(cl, 123)
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = TRUE, lapply_opt = FALSE)
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize, mirror = TRUE)
 
 parallel::stopCluster(cl)
 ```
 
-```{r example5-plot}
+```{r example8-plot, eval = TRUE}
 df <- data.frame(parameter = theta_p, KL = g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 5") + geom_vline(xintercept = true_value)
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 8") + geom_vline(xintercept = true_value)
+```
+
+```{r}
+sessionInfo()
 ```
 
 # Bibliography

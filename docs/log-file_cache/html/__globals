@@ -6,19 +6,26 @@ reverse-triangle	c	choose	log	number_of_graphs_dd	rep	sapply	seq
 reverse-triangle-plot	abline	c	par	plot	x	y0
 regular-graph	^	choose	exp	log	number_of_graphs_dd	rep	sapply	seq	sqrt
 regular-graph-plot	abline	c	par	plot	x	y0
-metaparameters	
-example1	::	$<-	detectCores	do.call	KL_net	list	log	makeCluster	n	parSapply	rep	replicates	seq	stopCluster
+metaparameters	::	!
+example1	::	log	mech_net_gnp	rep	replicates	seq
 example1-processing	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
-example2	::	$<-	detectCores	do.call	KL_net	list	log	makeCluster	n	parSapply	rep	replicates	seq	stopCluster
-example1-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
+example2	::	log	mech_net_gnp	rep	replicates	seq
+example1-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	library	parameter	theta_p	true_value
 example2-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
-example3	::	$<-	detectCores	do.call	KL_net	list	log	makeCluster	n	parSapply	rep	replicates	seq	stopCluster
+example3	::	log	mech_net_gnp	rep	replicates	seq
 example3-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
 reverse-triangle2	c	choose	log	number_of_graphs_dd	rep	sapply	seq
 reverse-triangle2-plot	abline	c	par	plot	x	ym
-libraries	library	sessionInfo	set.seed
-example4	::	~	library	list	log	rep	return	seq
+libraries	library	set.seed
+example4	::	log	mech_net_gnp	rep	replicates	seq
 example4-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
 entropy	^	entropy_calc	exp	factorial	lfactorial	log	pi	rbinom	rpois	sum
-example5	::	~	library	list	log	rep	return	seq
+example5	::	log	mech_net_gnp	rep	replicates	seq
 example5-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
+example6	::	!	log	mech_net_ergm_n	rep	replicates	seq
+example6-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
+unnamed-chunk-1	sessionInfo
+example7	::	!	log	mech_net_ergm_n	rep	replicates	seq
+example7-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
+example8	::	!	log	mech_net_ergm_n	rep	replicates	seq
+example8-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value

@@ -12,8 +12,9 @@
 
 <meta name="author" content="Anthony Ebert" />
 
+<meta name="date" content="2019-04-12" />
 
-<title>Recap</title>
+<title>Update</title>
 
 <script src="log-file_files/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -22,6 +23,7 @@
 <script src="log-file_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="log-file_files/bootstrap-3.3.5/shim/respond.min.js"></script>
 <script src="log-file_files/navigation-1.1/tabsets.js"></script>
+<script src="log-file_files/navigation-1.1/codefolding.js"></script>
 <link href="log-file_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="log-file_files/highlightjs-9.12.0/highlight.js"></script>
 
@@ -160,6 +162,9 @@ summary {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -176,61 +181,55 @@ summary {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
 
 
-<h1 class="title toc-ignore">Recap</h1>
+
+<h1 class="title toc-ignore">Update</h1>
 <h4 class="author">Anthony Ebert</h4>
-<h4 class="date">25/11/2019</h4>
+<h4 class="date">04/12/2019</h4>
 
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#tests">Tests</a><ul>
+<li><a href="#entropy">Entropy</a></li>
+<li><a href="#combinations-of-degree-sequences">Combinations of degree sequences</a><ul>
+<li><a href="#disconnected-dyads">Disconnected dyads</a></li>
+</ul></li>
+<li><a href="#single-triangle">Single triangle</a></li>
+<li><a href="#single-reverse-triangle">Single reverse triangle</a></li>
+<li><a href="#regular-graph">Regular graph</a></li>
+</ul></li>
+<li><a href="#examples">Examples</a><ul>
+<li><a href="#example-1">Example 1</a></li>
+<li><a href="#example-2">Example 2</a></li>
+<li><a href="#example-3">Example 3</a></li>
+<li><a href="#example-4">Example 4</a></li>
+<li><a href="#example-5">Example 5</a></li>
+<li><a href="#single-reverse-triangle-mirrored-degree-sequence">Single reverse triangle (mirrored degree sequence)</a></li>
+</ul></li>
+<li><a href="#ergm-as-mechanistic-models">ERGM as mechanistic models</a><ul>
+<li><a href="#example-6">Example 6</a></li>
+<li><a href="#example-7">Example 7</a></li>
+<li><a href="#example-8">Example 8</a></li>
+</ul></li>
+<li><a href="#bibliography">Bibliography</a></li>
+</ul>
+</div>
 
 <pre class="r"><code>set.seed(1)
 
 library(StartNetwork)
 library(parallel)
-library(ggplot2)
-
-sessionInfo()</code></pre>
-<pre><code>## R version 3.6.1 (2019-07-05)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 18.04.3 LTS
-## 
-## Matrix products: default
-## BLAS:   /usr/lib/x86_64-linux-gnu/openblas/libblas.so.3
-## LAPACK: /usr/lib/x86_64-linux-gnu/libopenblasp-r0.2.20.so
-## 
-## locale:
-##  [1] LC_CTYPE=en_AU.UTF-8       LC_NUMERIC=C              
-##  [3] LC_TIME=en_AU.UTF-8        LC_COLLATE=en_AU.UTF-8    
-##  [5] LC_MONETARY=en_AU.UTF-8    LC_MESSAGES=en_AU.UTF-8   
-##  [7] LC_PAPER=en_AU.UTF-8       LC_NAME=C                 
-##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-## [11] LC_MEASUREMENT=en_AU.UTF-8 LC_IDENTIFICATION=C       
-## 
-## attached base packages:
-## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
-## [8] base     
-## 
-## other attached packages:
-## [1] ergm_3.10.4-5181   network_1.15       ggplot2_3.2.0     
-## [4] StartNetwork_0.5.3
-## 
-## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.2           DEoptimR_1.0-8       pillar_1.4.2        
-##  [4] compiler_3.6.1       tools_3.6.1          digest_0.6.20       
-##  [7] evaluate_0.14        tibble_2.1.3         gtable_0.3.0        
-## [10] lattice_0.20-38      pkgconfig_2.0.2      rlang_0.4.0         
-## [13] Matrix_1.2-17        igraph_1.2.4.1       rstudioapi_0.10     
-## [16] yaml_2.2.0           xfun_0.8             coda_0.19-3         
-## [19] withr_2.1.2          stringr_1.4.0        dplyr_0.8.3         
-## [22] knitr_1.23           trust_0.1-7          grid_3.6.1          
-## [25] tidyselect_0.2.5     robustbase_0.93-5    glue_1.3.1.9000     
-## [28] R6_2.4.0             rmarkdown_1.14       purrr_0.3.2         
-## [31] magrittr_1.5         MASS_7.3-51.4        scales_1.0.0        
-## [34] htmltools_0.3.6      assertthat_0.2.1     lpSolve_5.6.13.2    
-## [37] colorspace_1.4-1     stringi_1.4.3        lazyeval_0.2.2      
-## [40] munsell_0.5.0        statnet.common_4.3.0 crayon_1.3.4</code></pre>
+library(ggplot2)</code></pre>
 <div id="tests" class="section level1">
 <h1>Tests</h1>
 <p>Here we test the functions used to estimate entropy and estimate the number of graphs corresponding to a particular sorted degree sequence. We find that the entropy computation is accurate, but estimating the number of graphs corresponding to a sorted degree sequence is more complicated.</p>
@@ -265,7 +264,7 @@ disjoint_dd &lt;- function(x, n = 15){
 y0 &lt;- sapply(1:5, disjoint_dd)</code></pre>
 <pre class="r"><code>par(pty=&quot;s&quot;)
 
-plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1)
+plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1, xlab = &quot;analytic expression&quot;, ylab = &quot;general estimator&quot;)
 abline(c(0,1), col = &quot;blue&quot;)</code></pre>
 <p><img src="log-file_files/figure-html/disjoint-plot-1.png" width="672" /></p>
 <pre class="r"><code># plot(x, y0 - x, xlim = c(0, 20), ylim = c(-6, 6))</code></pre>
@@ -285,7 +284,7 @@ triangle_dd &lt;- function(x){
 y0 &lt;- sapply(n, triangle_dd)</code></pre>
 <pre class="r"><code>par(pty=&quot;s&quot;)
 
-plot(x, y0, xlim = c(0, 10), ylim = c(0, 10), asp = 1)
+plot(x, y0, xlim = c(0, 10), ylim = c(0, 10), asp = 1, xlab = &quot;analytic expression&quot;, ylab = &quot;general estimator&quot;)
 abline(c(0,1), col = &quot;blue&quot;)</code></pre>
 <p><img src="log-file_files/figure-html/single-triangle-plot-1.png" width="672" /></p>
 <pre class="r"><code># plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))</code></pre>
@@ -304,7 +303,7 @@ triangle_dd &lt;- function(x){
 y0 &lt;- sapply(n, triangle_dd)</code></pre>
 <pre class="r"><code>par(pty=&quot;s&quot;)
 
-plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1)
+plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1, xlab = &quot;analytic expression&quot;, ylab = &quot;general estimator&quot;)
 abline(c(0,1), col = &quot;blue&quot;)</code></pre>
 <p><img src="log-file_files/figure-html/reverse-triangle-plot-1.png" width="672" /></p>
 <pre class="r"><code># plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))</code></pre>
@@ -328,7 +327,7 @@ regular_dd &lt;- function(x){
 y0 &lt;- sapply(n, regular_dd)</code></pre>
 <pre class="r"><code>par(pty=&quot;s&quot;)
 
-plot(x, y0, xlim = c(0, 180), ylim = c(0, 180), asp = 1)
+plot(x, y0, xlim = c(0, 180), ylim = c(0, 180), asp = 1, xlab = &quot;analytic expression&quot;, ylab = &quot;general estimator&quot;)
 abline(c(0,1), col = &quot;blue&quot;)</code></pre>
 <p><img src="log-file_files/figure-html/regular-graph-plot-1.png" width="672" /></p>
 <pre class="r"><code># plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))</code></pre>
@@ -339,99 +338,113 @@ abline(c(0,1), col = &quot;blue&quot;)</code></pre>
 <div id="examples" class="section level1">
 <h1>Examples</h1>
 <pre class="r"><code>n = 15
-replicates = 400</code></pre>
+replicates = 400
+
+mech_net_gnp = purrr::partial(igraph::sample_gnp, n = !!n, ... = , directed = FALSE, loops = FALSE)</code></pre>
 <div id="example-1" class="section level2">
 <h2>Example 1</h2>
-<p>Mechanistic model: GNP<br />
-Network model: ERGM<br />
+<p>Mechanistic model: Erdös-Renyi (target)<br />
+Statistical model: ERGM<br />
 Integral stat: sorted degree sequence<br />
 Likelihood stat: number of edges</p>
-<pre class="r"><code>mech_net_gnp = function(p, n, args){
-  args$p = p;
-  args$n = n;
-  do.call(igraph::sample_gnp, args)
-}
-
-mech_args_gnp = list(directed = FALSE)
-
-lstat = function(x){igraph::gsize(x)}
-
-true_value &lt;- 0.1
+<pre class="r"><code>true_value &lt;- 0.1
 theta_p &lt;- rep(seq(0.01, 0.2, by = 0.01), 5)
 theta_s &lt;- log(true_value/(1 - true_value))
 
-cl &lt;- makeCluster(detectCores())
+cl &lt;- parallel::makeCluster(parallel::detectCores())
 
-g &lt;- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = FALSE)
+g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize)
 
-stopCluster(cl)</code></pre>
-<pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)
+parallel::stopCluster(cl)</code></pre>
+<pre class="r"><code>library(ggplot2)
+
+df &lt;- data.frame(parameter = theta_p, KL = g)
 
 ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 1&quot;) + geom_vline(xintercept = true_value)</code></pre>
 <p><img src="log-file_files/figure-html/example1-plot-1.png" width="672" /></p>
 </div>
 <div id="example-2" class="section level2">
 <h2>Example 2</h2>
-<p>Mechanistic model: GNP<br />
-Network model: ERGM<br />
+<p>Mechanistic model: Erdös-Renyi (target)<br />
+Statistical model: ERGM<br />
 Integral stat: sorted degree sequence<br />
 Likelihood stat: number of edges</p>
-<pre class="r"><code>mech_net_gnp = function(p, n, args){
-  args$p = p;
-  args$n = n;
-  do.call(igraph::sample_gnp, args)
-}
-
-mech_args_gnp = list(directed = FALSE)
-
-lstat = function(x){igraph::gsize(x)}
-
-true_value &lt;- 0.9
+<pre class="r"><code>true_value &lt;- 0.9
 theta_p &lt;- rep(seq(0.80, 0.99, by = 0.01), 5)
 theta_s &lt;- log(true_value/(1 - true_value))
 
-cl &lt;- makeCluster(detectCores())
+cl &lt;- parallel::makeCluster(parallel::detectCores())
 
-g &lt;- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = FALSE)
+g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize)
 
-stopCluster(cl)</code></pre>
+parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)
 
 ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 2&quot;) + geom_vline(xintercept = true_value)</code></pre>
 <p><img src="log-file_files/figure-html/example2-plot-1.png" width="672" /></p>
-<p>Since we have found the space of dense graphs is counted inaccurately when the equation of <span class="citation">Bianconi (2009)</span> is naively applied, we map the space of dense graphs to the space of sparse graphs. In other words, we perform this simple conversion on the degree sequence: <span class="math display">\[
-d^* = n - d - 1
-\]</span></p>
 </div>
 <div id="example-3" class="section level2">
 <h2>Example 3</h2>
-<p>Mechanistic model: GNP<br />
-Network model: ERGM<br />
+<p>Mechanistic model: Erdös-Renyi (target)<br />
+Statistical model: ERGM<br />
 Integral stat: sorted degree sequence<br />
 Likelihood stat: number of edges</p>
-<pre class="r"><code>mech_net_gnp = function(p, n, args){
-  args$p = p;
-  args$n = n;
-  do.call(igraph::sample_gnp, args)
-}
-
-mech_args_gnp = list(directed = FALSE)
-
-lstat = function(x){igraph::gsize(x)}
-
-true_value &lt;- 0.9
-theta_p &lt;- rep(seq(0.80, 0.99, by = 0.01), 5)
+<pre class="r"><code>true_value &lt;- 0.5
+theta_p &lt;- rep(seq(0.3, 0.7, by = 0.01), 5)
 theta_s &lt;- log(true_value/(1 - true_value))
 
-cl &lt;- makeCluster(detectCores())
+cl &lt;- parallel::makeCluster(parallel::detectCores())
 
-g &lt;- parSapply(cl, theta_p, KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = TRUE)
+g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = FALSE)
 
-stopCluster(cl)</code></pre>
+parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)
 
 ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 3&quot;) + geom_vline(xintercept = true_value)</code></pre>
 <p><img src="log-file_files/figure-html/example3-plot-1.png" width="672" /></p>
+<p>Since we have found the space of dense graphs is counted inaccurately when the equation of <span class="citation">Bianconi (2009)</span> is naively applied, we map the space of dense graphs to the space of sparse graphs. In other words, we perform this simple conversion on the degree sequence: <span class="math display">\[
+d^* = n - d - 1
+\]</span></p>
+</div>
+<div id="example-4" class="section level2">
+<h2>Example 4</h2>
+<p>Mechanistic model: Erdös-Renyi (target)<br />
+Statistical model: ERGM<br />
+Integral stat: sorted degree sequence<br />
+Likelihood stat: number of edges</p>
+<pre class="r"><code>true_value &lt;- 0.9
+theta_p &lt;- rep(seq(0.80, 0.99, by = 0.01), 5)
+theta_s &lt;- log(true_value/(1 - true_value))
+
+cl &lt;- parallel::makeCluster(parallel::detectCores())
+
+g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = TRUE)
+
+parallel::stopCluster(cl)</code></pre>
+<pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 4&quot;) + geom_vline(xintercept = true_value)</code></pre>
+<p><img src="log-file_files/figure-html/example4-plot-1.png" width="672" /></p>
+</div>
+<div id="example-5" class="section level2">
+<h2>Example 5</h2>
+<p>Mechanistic model: Erdös-Renyi (target)<br />
+Statistical model: ERGM<br />
+Integral stat: sorted degree sequence<br />
+Likelihood stat: number of edges</p>
+<pre class="r"><code>true_value &lt;- 0.5
+theta_p &lt;- rep(seq(0.3, 0.7, by = 0.01), 5)
+theta_s &lt;- log(true_value/(1 - true_value))
+
+cl &lt;- parallel::makeCluster(parallel::detectCores())
+
+g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = TRUE)
+
+parallel::stopCluster(cl)</code></pre>
+<pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 5&quot;) + geom_vline(xintercept = true_value)</code></pre>
+<p><img src="log-file_files/figure-html/example5-plot-1.png" width="672" /></p>
 <p>We have successfully retrieved the parameter for a dense graph. To check</p>
 </div>
 <div id="single-reverse-triangle-mirrored-degree-sequence" class="section level2">
@@ -448,24 +461,46 @@ triangle_dd &lt;- function(x){
 ym &lt;- sapply(n, triangle_dd)</code></pre>
 <pre class="r"><code>par(pty=&quot;s&quot;)
 
-plot(x, ym, xlim = c(0, 20), ylim = c(0, 20), asp = 1)
+plot(x, ym, xlim = c(0, 20), ylim = c(0, 20), asp = 1, xlab = &quot;analytic expression&quot;, ylab = &quot;general estimator&quot;)
 abline(c(0,1), col = &quot;blue&quot;)</code></pre>
 <p><img src="log-file_files/figure-html/reverse-triangle2-plot-1.png" width="672" /></p>
-<pre class="r"><code># plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))</code></pre>
-<pre class="r"><code>n &lt;- 6
-replicates &lt;- 400
+</div>
+</div>
+<div id="ergm-as-mechanistic-models" class="section level1">
+<h1>ERGM as mechanistic models</h1>
+<div id="example-6" class="section level2">
+<h2>Example 6</h2>
+<p>Mechanistic model: ERGM (target)<br />
+Statistical model: ERGM<br />
+Integral stat: sorted degree sequence<br />
+Likelihood stat: number of edges</p>
+<pre class="r"><code>n &lt;- 15
 
-library(ergm)
-library(StartNetwork)
+mech_net_ergm &lt;- purrr::partial(mech_net_ergm_n, n = !!n)
 
-mech_net_gnp = function(p, n, args, nsim = 1){
-  ergg &lt;- ergm::simulate_formula(network::network(n, directed = FALSE) ~ edges, coef = log(p/(1-p)), nsim = nsim)
-  return(ergg)
-}
+true_value &lt;- 0.1
+theta_p &lt;- rep(seq(0.01, 0.2, by = 0.01), 5)
+theta_s &lt;- log(true_value/(1 - true_value))
 
-mech_args_gnp = list(directed = FALSE)
+cl &lt;- parallel::makeCluster(parallel::detectCores())
 
-lstat = function(x){igraph::gsize(x)}
+g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize)
+
+parallel::stopCluster(cl)</code></pre>
+<pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 6&quot;) + geom_vline(xintercept = true_value)</code></pre>
+<p><img src="log-file_files/figure-html/example6-plot-1.png" width="672" /></p>
+</div>
+<div id="example-7" class="section level2">
+<h2>Example 7</h2>
+<p>Mechanistic model: ERGM (target)<br />
+Statistical model: ERGM<br />
+Integral stat: sorted degree sequence<br />
+Likelihood stat: number of edges</p>
+<pre class="r"><code>n &lt;- 15
+
+mech_net_ergm &lt;- purrr::partial(mech_net_ergm_n, n = !!n)
 
 true_value &lt;- 0.9
 theta_p &lt;- rep(seq(0.80, 0.99, by = 0.01), 5)
@@ -473,43 +508,79 @@ theta_s &lt;- log(true_value/(1 - true_value))
 
 cl &lt;- parallel::makeCluster(parallel::detectCores())
 
-g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = TRUE, lapply_opt = FALSE)
+g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize, mirror = TRUE)
 
 parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 4&quot;) + geom_vline(xintercept = true_value)</code></pre>
-<p><img src="log-file_files/figure-html/example4-plot-1.png" width="672" /></p>
-<pre class="r"><code>n &lt;- 6
-replicates &lt;- 400
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 7&quot;) + geom_vline(xintercept = true_value)</code></pre>
+<p><img src="log-file_files/figure-html/example7-plot-1.png" width="672" /></p>
+</div>
+<div id="example-8" class="section level2">
+<h2>Example 8</h2>
+<p>Mechanistic model: ERGM (target)<br />
+Statistical model: ERGM<br />
+Integral stat: sorted degree sequence<br />
+Likelihood stat: number of edges</p>
+<pre class="r"><code>n &lt;- 15
 
-library(ergm)
-library(StartNetwork)
-library(parallel)
+mech_net_ergm &lt;- purrr::partial(mech_net_ergm_n, n = !!n)
 
-mech_net_gnp = function(p, n, args, nsim = 1){
-  ergg &lt;- ergm::simulate_formula(network::network(n, directed = FALSE) ~ edges, coef = log(p/(1-p)), nsim = nsim, control = ergm::control.simulate.formula.ergm(MCMC.prop.weights = &quot;random&quot;, MCMC.interval = 4000, MCMC.burnin = 50000, MCMC.init.maxedges = 10), sequential = TRUE)
-  return(ergg)
-}
-
-mech_args_gnp = list(directed = FALSE)
-
-lstat = function(x){igraph::gsize(x)}
-
-true_value &lt;- 0.1
-theta_p &lt;- rep(seq(0.01, 0.2, by = 0.01), 5)
+true_value &lt;- 0.5
+theta_p &lt;- rep(seq(0.3, 0.7, by = 0.01), 5)
 theta_s &lt;- log(true_value/(1 - true_value))
 
 cl &lt;- parallel::makeCluster(parallel::detectCores())
-parallel::clusterSetRNGStream(cl, 123)
 
-g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, n = n, mech_net = mech_net_gnp, mech_args = mech_args_gnp, replicates = replicates, lstat = lstat, sorted = TRUE, mirror = TRUE, lapply_opt = FALSE)
+g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize, mirror = TRUE)
 
 parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 5&quot;) + geom_vline(xintercept = true_value)</code></pre>
-<p><img src="log-file_files/figure-html/example5-plot-1.png" width="672" /></p>
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle(&quot;Example 8&quot;) + geom_vline(xintercept = true_value)</code></pre>
+<p><img src="log-file_files/figure-html/example8-plot-1.png" width="672" /></p>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>## R version 3.6.1 (2019-07-05)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Ubuntu 18.04.3 LTS
+## 
+## Matrix products: default
+## BLAS:   /usr/lib/x86_64-linux-gnu/openblas/libblas.so.3
+## LAPACK: /usr/lib/x86_64-linux-gnu/libopenblasp-r0.2.20.so
+## 
+## locale:
+##  [1] LC_CTYPE=en_AU.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_AU.UTF-8        LC_COLLATE=en_AU.UTF-8    
+##  [5] LC_MONETARY=en_AU.UTF-8    LC_MESSAGES=en_AU.UTF-8   
+##  [7] LC_PAPER=en_AU.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_AU.UTF-8 LC_IDENTIFICATION=C       
+## 
+## attached base packages:
+## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
+## [8] base     
+## 
+## other attached packages:
+## [1] ergm_3.10.4-5181   network_1.15       ggplot2_3.2.0     
+## [4] StartNetwork_1.0.0
+## 
+## loaded via a namespace (and not attached):
+##  [1] gmp_0.5-13.5         Rcpp_1.0.3           DEoptimR_1.0-8      
+##  [4] pillar_1.4.2         compiler_3.6.1       arrangements_1.1.7  
+##  [7] tools_3.6.1          digest_0.6.20        evaluate_0.14       
+## [10] tibble_2.1.3         gtable_0.3.0         lattice_0.20-38     
+## [13] pkgconfig_2.0.2      rlang_0.4.0          Matrix_1.2-17       
+## [16] igraph_1.2.4.1       rstudioapi_0.10      yaml_2.2.0          
+## [19] xfun_0.8             coda_0.19-3          withr_2.1.2         
+## [22] stringr_1.4.0        dplyr_0.8.3          knitr_1.23          
+## [25] trust_0.1-7          grid_3.6.1           tidyselect_0.2.5    
+## [28] robustbase_0.93-5    glue_1.3.1.9000      R6_2.4.0            
+## [31] rmarkdown_1.14       purrr_0.3.2          magrittr_1.5        
+## [34] codetools_0.2-16     MASS_7.3-51.4        scales_1.0.0        
+## [37] htmltools_0.3.6      assertthat_0.2.1     lpSolve_5.6.13.2    
+## [40] colorspace_1.4-1     labeling_0.3         stringi_1.4.3       
+## [43] lazyeval_0.2.2       munsell_0.5.0        statnet.common_4.3.0
+## [46] crayon_1.3.4</code></pre>
 </div>
 </div>
 <div id="bibliography" class="section level1 unnumbered">
@@ -557,6 +628,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
