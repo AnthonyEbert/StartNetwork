@@ -1,4 +1,5 @@
 
+#' Degree distribution standardised
 #' @export
 degree_dist_standardised <- function(g, maxk = 1000){
   output <- rep(0, maxk)
@@ -43,9 +44,7 @@ ldouble_factorial <- function(n){
   return(output)
 }
 
-#'
 #' @export
-#'
 number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, mirror = FALSE){
 
   if(!igraph::is_graphical(x)){

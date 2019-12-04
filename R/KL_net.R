@@ -1,13 +1,13 @@
 
+# net_ss <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRUE, mech_net, mech_args, lstat, lapply_opt = TRUE, ds_return = FALSE, pmf = NULL, mirror = TRUE){
+
 #' KL Divergence of mechanistic and statistical network models
 #' @param theta_m numeric mechanistic model parameters
-#' @param n integer number of nodes
-#' @param theta_s numeric statistical model parameters
 #' @param replicates numeric number of replicates
 #' @param sorted logical whether to consider the sorted or unsorted degree sequence as the integral statistic
 #' @param mech_net function the mechanistic network simulator
-#' @param mech_args list arguments to the mechanistic network simulator
 #' @param lstat function computes the likelihood statistic
+#' @param lapply_opt boolean internal
 #' @importFrom magrittr %>%
 #' @examples
 #'
@@ -29,51 +29,62 @@
 #' )
 #'
 #' @export
-KL_net <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRUE, mech_net, mech_args, lstat, lapply_opt = TRUE, ds_return = FALSE, pmf = NULL, mirror = TRUE){
+net_ss <- function(theta_m, replicates = 1000, sorted = TRUE, mech_net, lstat, lapply_opt = TRUE){
 
-  stopifnot(is.numeric(n))
-  stopifnot(n %% 1 == 0)
   stopifnot(is.numeric(replicates))
   stopifnot(replicates %% 1 == 0)
   stopifnot(replicates > 0)
   stopifnot(is.logical(sorted))
 
-  ne <- choose(n,2)
+  if(sorted){
+    dstat <- function(x){sort.int(as.numeric(igraph::degree(x)))}
+  } else {
+    dstat <- function(x){as.numeric(igraph::degree(x))}
+  }
+
+  stat_func <- purrr::partial(stat_constructor, dstat = !!dstat, lstat = !!lstat)
+
+  mech_stat <- purrr::compose(stat_func, mech_net)
 
   if(lapply_opt){
-    g <- lapply(rep(theta_m, replicates), func, mech_net = mech_net, lstat = lstat, n = n, args = mech_args)
+    g <- lapply(rep(theta_m, replicates), mech_stat)
   } else if(!lapply_opt){
-    g <- mech_net(theta_m, n, mech_args, nsim = replicates)
-    g <- purrr::map(g, purrr::compose(function(x){list(degree = as.numeric(igraph::degree(x)), stat = lstat(x))}, purrr::partial(igraph::graph.adjacency, mode = "undirected"), network::as.matrix.network.adjacency))
+    g <- mech_net(theta_m, nsim = replicates) %>% purrr::map(mech_stat)
   }
 
+  attr(g, "sorted") <- sorted
+
+  return(g)
+}
+
+#' @export
+process_ss <- function(g, theta_s, mirror){
+  sorted = attr(g, "sorted")
 
   ds <- lapply(g, function(x){x$degree})
-  if(sorted){
-    ds <- lapply(ds, sort.int)
-  }
 
-  if(ds_return){return(ds)}
+  lik_sum_stats <- aapply(g, function(x){x$stat}) %>% rowMeans()
 
-  y1 <- aapply(g, function(x){x$stat}) %>% rowMeans()
-
-  stopifnot(length(y1) == length(theta_s))
-  y2 <- mean(sapply(ds, number_of_graphs_dd, sorted = sorted, mirror = mirror))
+  stopifnot(length(lik_sum_stats) == length(theta_s))
+  logh <- mean(sapply(ds, number_of_graphs_dd, sorted = sorted, mirror = mirror))
 
   entropy <- entropy_calc(ds, hash = TRUE)
 
-  if(is.null(pmf)){
-    output <- KL_calc2(theta_s, y1, y2, entropy)
-  } else {
-    y_hash <- sapply(ds, digest::digest, algo = "md5")
-    y_table <- table(y_hash)
-    y_df <- as.data.frame(y_table)
-    names(y_df) <- c("hash", "Freq_y")
-    out_df <- acetools::left_join_quietly(y_df, pmf, by = "hash")
-    out_df$Freq_x[which(is.na(out_df$Freq_x))] <- 1/dim(pmf)[1] / 100
-    likely <- sum(log(apply(out_df[,c(2,3)], 1, prod)), na.rm = TRUE)
-    output <- -likely - y2 - entropy
-  }
+  log_lik <- sum(theta_s * lik_sum_stats)
+
+  output <- c(entropy = entropy, logh = logh, log_lik = log_lik)
+  attr(output, "lik_sum_stats") <- lik_sum_stats
 
   return(output)
 }
+
+#' @export
+KL_ss <- function(theta_s, mirror = FALSE, ...){
+  purrr::compose(~process_ss(.x, theta_s, mirror), net_ss)(...)
+}
+
+#' @export
+KL_net <- function(theta_m, ...){
+  -sum(KL_ss(theta_m = theta_m, ...))
+}
+
