@@ -348,7 +348,7 @@ theta_s &lt;- log(true_value/(1 - true_value))
 
 cl &lt;- parallel::makeCluster(parallel::detectCores())
 
-g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize)
+g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = FALSE)
 
 parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>library(ggplot2)
@@ -370,7 +370,7 @@ theta_s &lt;- log(true_value/(1 - true_value))
 
 cl &lt;- parallel::makeCluster(parallel::detectCores())
 
-g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize)
+g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = FALSE)
 
 parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)
@@ -479,7 +479,7 @@ theta_s &lt;- log(true_value/(1 - true_value))
 
 cl &lt;- parallel::makeCluster(parallel::detectCores())
 
-g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize)
+g &lt;- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize, mirror = TRUE)
 
 parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>df &lt;- data.frame(parameter = theta_p, KL = g)

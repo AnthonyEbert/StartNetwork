@@ -79,7 +79,7 @@ process_ss <- function(g, theta_s, mirror){
 }
 
 #' @export
-KL_ss <- function(theta_s, mirror = FALSE, ...){
+KL_ss <- function(theta_s, mirror = TRUE, ...){
   purrr::compose(~process_ss(.x, theta_s, mirror), net_ss)(...)
 }
 

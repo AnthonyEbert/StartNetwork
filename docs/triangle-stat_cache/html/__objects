@@ -1,0 +1,8 @@
+libraries	n	replicates
+triangles1	cl	g	mech_net_triangles	theta_p	theta_s	true_value
+triangles1-plot	df
+triangles2	cl	g	mech_net_triangles	theta_p	theta_s	true_value
+triangles2-plot	df
+session	
+triangles3	cl	g	mech_net_triangles	theta_p	theta_s	true_value
+triangles3-plot	df

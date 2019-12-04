@@ -1,0 +1,8 @@
+libraries	library	set.seed
+triangles1	::	!	length	log	mech_net_triangles_n	n	rep	replicates	seq
+triangles1-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
+triangles2	::	!	length	log	mech_net_triangles_n	n	rep	replicates	seq
+triangles2-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
+session	sessionInfo
+triangles3	::	!	length	log	mech_net_triangles_n	n	rep	replicates	seq
+triangles3-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value

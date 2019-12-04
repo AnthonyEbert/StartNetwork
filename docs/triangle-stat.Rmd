@@ -1,0 +1,96 @@
+---
+title: "Triangle stat"
+author: "Anthony Ebert"
+date: "04/12/2019"
+output: 
+  html_document:
+    toc: true
+    self_contained: false
+    code_folding: hide
+bibliography: link.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, cache.rebuild = TRUE, autodep = TRUE)
+```
+
+```{r libraries, cache = TRUE}
+set.seed(1)
+
+library(StartNetwork)
+library(parallel)
+library(ggplot2)
+
+n = 15
+replicates = 400
+```
+
+## Triangles 1
+
+```{r triangles1}
+mech_net_triangles <- purrr::partial(mech_net_triangles_n, n = !!n)
+
+true_value <- 0.4
+theta_p <- rep(seq(0.3, 0.5, by = 0.02), 5)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE)
+
+parallel::stopCluster(cl)
+```
+
+```{r triangles1-plot, eval = TRUE}
+df <- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 1") + geom_vline(xintercept = true_value)
+```
+
+## Triangles 2
+
+```{r triangles2}
+mech_net_triangles <- purrr::partial(mech_net_triangles_n, n = !!n)
+
+true_value <- 0.5
+theta_p <- rep(seq(0.4, 0.6, by = 0.02), 5)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE)
+
+parallel::stopCluster(cl)
+```
+
+```{r triangles2-plot, eval = TRUE}
+df <- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 2") + geom_vline(xintercept = true_value)
+```
+
+## Triangles 3
+
+```{r triangles3}
+mech_net_triangles <- purrr::partial(mech_net_triangles_n, n = !!n)
+
+true_value <- 0.3
+theta_p <- rep(seq(0.2, 0.4, by = 0.02), 5)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE)
+
+parallel::stopCluster(cl)
+```
+
+```{r triangles3-plot, eval = TRUE}
+df <- data.frame(parameter = theta_p, KL = g)
+
+ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 3") + geom_vline(xintercept = true_value)
+```
+
+```{r session}
+sessionInfo()
+```

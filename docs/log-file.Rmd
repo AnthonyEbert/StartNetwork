@@ -174,7 +174,7 @@ theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize)
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = FALSE)
 
 parallel::stopCluster(cl)
 ```
@@ -201,7 +201,7 @@ theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize)
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = FALSE)
 
 parallel::stopCluster(cl)
 ```
@@ -335,7 +335,7 @@ theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize)
+g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize, mirror = TRUE)
 
 parallel::stopCluster(cl)
 ```
