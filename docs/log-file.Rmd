@@ -1,5 +1,5 @@
 ---
-title: "Update"
+title: "Estimates with an ERGM as a mechanistic model"
 author: "Anthony Ebert"
 date: "04/12/2019"
 output: 
@@ -22,11 +22,15 @@ library(parallel)
 library(ggplot2)
 ```
 
-# Tests
+**Purpose**: To investigate why we were having problems retrieving parameter estimates when the ERGM is the mechanistic model. 
 
-Here we test the functions used to estimate entropy and estimate the number of graphs corresponding to a particular sorted degree sequence. We find that the entropy computation is accurate, but estimating the number of graphs corresponding to a sorted degree sequence is more complicated. 
+**Summary**: We can now retrieve the parameters accurately where the ERGM is the mechanistic model, in other words, where the ERGM parameter is the parameter of interest. See examples 6,7, and 8. 
 
-## Entropy
+Firstly we test the functions used to estimate entropy and estimate the number of graphs corresponding to a particular sorted degree sequence. We find that the entropy computation is accurate, but estimating the number of graphs corresponding to a sorted degree sequence is more complicated. 
+
+We then test whether the minimum KL divergence between mechanistic and statistical network models corresponds to the true parameter of the statistical network model. In all cases the statistical network model is an ERGM where the likelihood statistic is the number of edges. 
+
+# Entropy
 
 We compare entropy computed with the non-parameter estimator `entropy_calc` using samples from the binomial distribution, with the analytic expression for the limit of entropy for the binomial distribution. The same comparison is also made with the Poisson distribution. 
 
@@ -44,11 +48,13 @@ k <- 1:100
 lambda * (1 - log(lambda)) + exp(-lambda) * sum((lambda^k * lfactorial(k))/factorial(k))
 ```
 
-## Combinations of degree sequences
+# Combinations of degree sequences
 
-We check whether we are counting the space of graphs correctly. Firstly, we look at graphs where the degrees of the nodes are either zero or one, where the number of nodes with degree one is even. This means that network consists only of disconnected dyads. 
+We check whether the mapping of @bianconi2009entropy from degree sequences to size of graph spaces works well we look at simple examples of graphs spaces with known sizes and known degree sequences. 
 
-### Disconnected dyads 
+Firstly, we look at graphs where the degrees of the nodes are either zero or one, where the number of nodes with degree one is even. This means that network consists only of disconnected dyads. 
+
+## Disconnected dyads 
 
 ```{r disjoint, dependson="libraries"}
 disconnected_dyad <- choose(choose(seq(15, 7, by = -2),2), 1)
@@ -66,8 +72,6 @@ par(pty="s")
 
 plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1, xlab = "analytic expression", ylab = "general estimator")
 abline(c(0,1), col = "blue")
-
-# plot(x, y0 - x, xlim = c(0, 20), ylim = c(-6, 6))
 ```
 
 ## Single triangle
@@ -90,8 +94,6 @@ par(pty="s")
 
 plot(x, y0, xlim = c(0, 10), ylim = c(0, 10), asp = 1, xlab = "analytic expression", ylab = "general estimator")
 abline(c(0,1), col = "blue")
-
-# plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
 ```
 
 ## Single reverse triangle
@@ -114,11 +116,9 @@ par(pty="s")
 
 plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1, xlab = "analytic expression", ylab = "general estimator")
 abline(c(0,1), col = "blue")
-
-# plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
 ```
 
-It seems that the base measure for the sorted degree sequence is more accurately measured for spare graphs than dense graphs. Let's look now at graphs in the middle, regular graphs where the degree is n/2. 
+It seems that the base measure for the sorted degree sequence is more accurately measured for sparse graphs than dense graphs. Let's look now at graphs in the middle, regular graphs where the degree is n/2. 
 
 ## Regular graph
 
@@ -145,8 +145,6 @@ par(pty="s")
 
 plot(x, y0, xlim = c(0, 180), ylim = c(0, 180), asp = 1, xlab = "analytic expression", ylab = "general estimator")
 abline(c(0,1), col = "blue")
-
-# plot(n, y0 - x, xlim = c(0, 15), ylim = c(-60, 60))
 ```
 
 The base measure seems to accurately compute the sorted degree sequence for a regular graph midway between sparse and dense. 
@@ -239,11 +237,10 @@ df <- data.frame(parameter = theta_p, KL = g)
 ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 3") + geom_vline(xintercept = true_value)
 ```
 
-Since we have found the space of dense graphs is counted inaccurately when the equation of @bianconi2009entropy is naively applied, we map the space of dense graphs to the space of sparse graphs. In other words, we perform this simple conversion on the degree sequence:
+The graphs don't look correct in examples 2 and 3. This is because the space of dense graphs is counted inaccurately when the equation of @bianconi2009entropy is naively applied, we map the space of dense graphs to the space of sparse graphs. In other words, we pretend a dense graph is really a sparse graph by converting all non-edges to edges and all edges to non-edges. The conversion from the original degree sequence $d$ to the new degree sequence $d^*$ is the following (where $n$ is the number of nodes):
 $$
-d^* = n - d - 1
+d^* = n - d - 1. 
 $$
-
 
 ## Example 4
 
