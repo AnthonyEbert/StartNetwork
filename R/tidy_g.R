@@ -5,7 +5,7 @@ tidy_g <- function(g){
   lik_sum_stats <- sapply(g, function(x){attr(x, "lik_sum_stats")})
 
   g_df <- do.call(dplyr::bind_rows, g) %>%
-    mutate(
+    dplyr::mutate(
       KLdi1 = -entropy - logh1 - log_lik,
       KLdi2 = -entropy - logh2 - log_lik,
       sum_stat = lik_sum_stats,
@@ -14,13 +14,13 @@ tidy_g <- function(g){
 
   g_tidy <- g_df %>%
     tidyr::gather( , , -parameter) %>%
-    mutate(
-      type = case_when(
+    dplyr::mutate(
+      type = dplyr::case_when(
         stringr::str_ends(key, "1") ~ "Bianconi",
         stringr::str_ends(key, "2") ~ "Liebenau",
         TRUE ~ "common"
       ),
-      key = case_when(
+      key = dplyr::case_when(
         stringr::str_ends(key, "1") ~ substr(key, 1, 4),
         stringr::str_ends(key, "2") ~ substr(key, 1, 4),
         TRUE ~ key
