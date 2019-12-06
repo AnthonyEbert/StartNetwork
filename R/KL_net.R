@@ -58,7 +58,7 @@ net_ss <- function(theta_m, replicates = 1000, sorted = TRUE, mech_net, lstat, l
 }
 
 #' @export
-process_ss <- function(g, theta_s, mirror){
+process_ss <- function(g, theta_s, mirror, type = "Bianconi"){
   sorted = attr(g, "sorted")
 
   ds <- lapply(g, function(x){x$degree})
@@ -66,7 +66,7 @@ process_ss <- function(g, theta_s, mirror){
   lik_sum_stats <- aapply(g, function(x){x$stat}) %>% rowMeans()
 
   stopifnot(length(lik_sum_stats) == length(theta_s))
-  logh <- mean(sapply(ds, number_of_graphs_dd, sorted = sorted, mirror = mirror))
+  logh <- rowMeans(aapply(ds, number_of_graphs_dd, sorted = sorted, mirror = mirror, type = type))
 
   entropy <- entropy_calc(ds, hash = TRUE)
 
@@ -79,8 +79,9 @@ process_ss <- function(g, theta_s, mirror){
 }
 
 #' @export
-KL_ss <- function(theta_s, mirror = TRUE, ...){
-  purrr::compose(~process_ss(.x, theta_s, mirror), net_ss)(...)
+KL_ss <- function(theta_m, theta_s, mirror = TRUE, type = "Bianconi", ...){
+  net_ss(theta_m = theta_m, ...) %>%
+    process_ss(theta_s = theta_s, mirror = mirror, type = type)
 }
 
 #' @export

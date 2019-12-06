@@ -45,14 +45,14 @@ ldouble_factorial <- function(n){
 }
 
 #' @export
-number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, mirror = FALSE){
+number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, mirror = FALSE, type = "Bianconi"){
 
   if(!igraph::is_graphical(x)){
-    return(-Inf)
+    return(rep(-Inf, length(type)))
   }
 
   if(all(x == 0)){
-    return(0)
+    return(rep(0, length(type)))
   }
 
   M <- sum(x)
@@ -60,7 +60,7 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, mirror = FALSE){
   n <- length(x)
 
   if(all(x == (n-1))){
-    return(0)
+    return(rep(0, length(type)))
   }
 
   if(mirror){
@@ -69,9 +69,20 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, mirror = FALSE){
     }
   }
 
-  output <- ldouble_factorial(mean(x)*n) +
-    (-0.25 * (mean(x ^ 2)/mean(x))^2) -
-    sum(lfactorial(x))
+  output <- NULL
+
+  if("Bianconi" %in% type){
+    output <- ldouble_factorial(mean(x)*n) +
+      (-0.25 * (mean(x ^ 2)/mean(x))^2) -
+      sum(lfactorial(x))
+  }
+
+  if("Liebenau" %in% type){
+    gamma2 <- var(x)/(n - 1)
+    mud = mean(x)/(n - 1)
+    output2 <- 0.5 * log(2) + 1/4 - gamma2^2 / (4 * mud^2 * (1 - mud)^2) + (n * (n - 1)/2) *( mud * log(mud) + (1 - mud)*log(1 - mud)) + sum(lchoose(n - 1, x))
+    output <- c(output, output2)
+  }
 
   if(sorted){
     size_factor <- arrangements::npermutations(k = length(x), freq = as.numeric(table(x)), bigz = bigz)
