@@ -1,31 +1,29 @@
-disjoint	c	choose	cumsum	log	number_of_graphs_dd	rep	sapply	seq
-disjoint-plot	abline	c	par	plot	x	y0
-single-triangle	c	choose	log	number_of_graphs_dd	rep	sapply	seq
-single-triangle-plot	abline	c	par	plot	x	y0
-reverse-triangle	c	choose	log	number_of_graphs_dd	rep	sapply	seq
-reverse-triangle-plot	abline	c	par	plot	x	y0
-regular-graph	^	choose	exp	log	number_of_graphs_dd	rep	sapply	seq	sqrt
-regular-graph-plot	abline	c	par	plot	x	y0
-metaparameters	::	!
-example1	::	log	mech_net_gnp	rep	replicates	seq
-example1-processing	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
-example2	::	log	mech_net_gnp	rep	replicates	seq
-example1-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	library	parameter	theta_p	true_value
-example2-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
-example3	::	log	mech_net_gnp	rep	replicates	seq
-example3-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
-reverse-triangle2	c	choose	log	number_of_graphs_dd	rep	sapply	seq
-reverse-triangle2-plot	abline	c	par	plot	x	ym
 libraries	library	set.seed
-example4	::	log	mech_net_gnp	rep	replicates	seq
-example4-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
 entropy	^	entropy_calc	exp	factorial	lfactorial	log	pi	rbinom	rpois	sum
-example5	::	log	mech_net_gnp	rep	replicates	seq
-example5-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
-example6	::	!	log	mech_net_ergm_n	rep	replicates	seq
-example6-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
+disjoint	c	cumsum	lchoose	number_of_graphs_dd	rep	sapply	seq
+disjoint-plot	abline	c	legend	par	plot	points	x	yb	yl
+single-triangle	c	choose	log	number_of_graphs_dd	rep	sapply	seq
+single-triangle-plot	abline	c	legend	par	plot	points	x	yb	yl
+reverse-triangle	c	choose	log	number_of_graphs_dd	rep	sapply	seq
+reverse-triangle-plot	abline	c	legend	par	plot	points	x	yb	yl
+regular-graph	^	choose	exp	log	number_of_graphs_dd	rep	sapply	seq	sqrt
+regular-graph-plot	abline	c	legend	par	plot	points	x	yb	yl
+metaparameters	::	!
+example1	::	box_replicates	c	log	mech_net_gnp	rep	replicates	seq
+example1-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	type	value
+example2	::	box_replicates	c	log	mech_net_gnp	rep	replicates	seq
+example2-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	type	value
+example3	::	box_replicates	c	log	mech_net_gnp	rep	replicates	seq
+example3-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	type	value
+example4	::	box_replicates	c	log	mech_net_gnp	rep	replicates	seq
+example4-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	type	value
+example5	::	c	log	mech_net_gnp	rep	replicates	seq
+example5-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	type	value
+reverse-triangle2	c	choose	log	number_of_graphs_dd	rep	sapply	seq
+reverse-triangle2-plot	abline	c	legend	par	plot	points	x	yb	yl
+example6	::	!	box_replicates	c	log	mech_net_ergm_n	rep	replicates	seq
+example6-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	type	value
+example7	::	!	box_replicates	c	log	mech_net_ergm_n	rep	replicates	seq
+example8	::	!	box_replicates	c	log	mech_net_ergm_n	rep	replicates	seq
+example8-plot	::	~	aes	facet_wrap	g8	geom_boxplot	ggplot	interaction	library	parameter	type	value
 unnamed-chunk-1	sessionInfo
-example7	::	!	log	mech_net_ergm_n	rep	replicates	seq
-example7-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
-example8	::	!	log	mech_net_ergm_n	rep	replicates	seq
-example8-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value

@@ -1,31 +1,29 @@
-disjoint	disconnected_dyad	disjoint_dd	x	y0
-disjoint-plot	
-single-triangle	n	onetriangle	triangle_dd	x	y0
-single-triangle-plot	
-reverse-triangle	n	onetriangle	triangle_dd	x	y0
-reverse-triangle-plot	
-regular-graph	d	lambda	n	regular_dd	regulargraphs	x	y0
-regular-graph-plot	
-metaparameters	mech_net_gnp	n	replicates
-example1	cl	g	theta_p	theta_s	true_value
-example1-processing	df
-example2	cl	g	theta_p	theta_s	true_value
-example1-plot	df
-example2-plot	df
-example3	cl	g	theta_p	theta_s	true_value
-example3-plot	df
-reverse-triangle2	n	onetriangle	triangle_dd	x	ym
-reverse-triangle2-plot	
-libraries	
-example4	cl	g	theta_p	theta_s	true_value
-example4-plot	df
+libraries	.Random.seed
 entropy	k	lambda	x
+disjoint	disconnected_dyad	disjoint_dd_b	disjoint_dd_l	x	yb	yl
+disjoint-plot	
+single-triangle	n	onetriangle	triangle_dd_b	triangle_dd_l	x	yb	yl
+single-triangle-plot	
+reverse-triangle	n	onetriangle	triangle_dd_b	triangle_dd_l	x	yb	yl
+reverse-triangle-plot	
+regular-graph	d	lambda	n	regular_dd_b	regular_dd_l	regulargraphs	x	yb	yl
+regular-graph-plot	
+metaparameters	box_replicates	mech_net_gnp	n	replicates
+example1	cl	g	theta_p	theta_s	true_value
+example1-plot	g_tidy
+example2	cl	g	theta_p	theta_s	true_value
+example2-plot	g_tidy
+example3	cl	g	theta_p	theta_s	true_value
+example3-plot	g_tidy
+example4	cl	g	theta_p	theta_s	true_value
+example4-plot	g_tidy
 example5	cl	g	theta_p	theta_s	true_value
-example5-plot	df
+example5-plot	g_tidy
+reverse-triangle2	n	onetriangle	triangle_dd_b	triangle_dd_l	x	yb	yl
+reverse-triangle2-plot	
 example6	cl	g	mech_net_ergm	n	theta_p	theta_s	true_value
-example6-plot	df
+example6-plot	g_tidy
+example7	cl	g7	mech_net_ergm	n	theta_p	theta_s	true_value
+example8	cl	g8	mech_net_ergm	n	theta_p	theta_s	true_value
+example8-plot	g_tidy
 unnamed-chunk-1	
-example7	cl	g	mech_net_ergm	n	theta_p	theta_s	true_value
-example7-plot	df
-example8	cl	g	mech_net_ergm	n	theta_p	theta_s	true_value
-example8-plot	df

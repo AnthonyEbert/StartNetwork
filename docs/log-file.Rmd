@@ -57,21 +57,30 @@ Firstly, we look at graphs where the degrees of the nodes are either zero or one
 ## Disconnected dyads 
 
 ```{r disjoint, dependson="libraries"}
-disconnected_dyad <- choose(choose(seq(15, 7, by = -2),2), 1)
-x <- cumsum(log(disconnected_dyad))
+disconnected_dyad <- lchoose(seq(15, 7, by = -2),2)
+x <- cumsum(disconnected_dyad)
 
-disjoint_dd <- function(x, n = 15){
-  number_of_graphs_dd(c(rep(0,n - 2*x), rep(1, 2*x)))
+disjoint_dd_b <- function(x, n = 15){
+  number_of_graphs_dd(c(rep(0,n - 2*x), rep(1, 2*x)), type = "Bianconi")
 }
 
-y0 <- sapply(1:5, disjoint_dd)
+disjoint_dd_l <- function(x, n = 15){
+  number_of_graphs_dd(c(rep(0,n - 2*x), rep(1, 2*x)), type = "Liebenau")
+}
+
+yb <- sapply(1:5, disjoint_dd_b)
+yl <- sapply(1:5, disjoint_dd_l)
 ```
 
 ```{r disjoint-plot, dependson="disjoint"}
 par(pty="s")
 
-plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1, xlab = "analytic expression", ylab = "general estimator")
-abline(c(0,1), col = "blue")
+plot(x, yb, xlim = c(0, 20), ylim = c(0, 20), asp = 1, xlab = "analytic expression", ylab = "general estimator", col = "blue")
+abline(c(0,1), col = "black")
+
+points(x, yl, col = "red")
+
+legend(10,5, legend = c("Bianconi", "Liebenau"), fill = c("blue", "red"))
 ```
 
 ## Single triangle
@@ -82,18 +91,27 @@ n <- seq(5, 15, by = 2)
 onetriangle <- choose(n,3)
 x <- log(onetriangle[1:6])
 
-triangle_dd <- function(x){
-  number_of_graphs_dd(c(rep(0,x - 3), c(2,2,2)))
+triangle_dd_b <- function(x){
+  number_of_graphs_dd(c(rep(0,x - 3), c(2,2,2)), type = "Bianconi")
 }
 
-y0 <- sapply(n, triangle_dd)
+triangle_dd_l <- function(x){
+  number_of_graphs_dd(c(rep(0,x - 3), c(2,2,2)), type = "Liebenau")
+}
+
+yb <- sapply(n, triangle_dd_b)
+yl <- sapply(n, triangle_dd_l)
 ```
 
 ```{r single-triangle-plot, dependson="single-triangle"}
 par(pty="s")
 
-plot(x, y0, xlim = c(0, 10), ylim = c(0, 10), asp = 1, xlab = "analytic expression", ylab = "general estimator")
-abline(c(0,1), col = "blue")
+plot(x, yb, xlim = c(0, 10), ylim = c(0, 10), asp = 1, xlab = "analytic expression", ylab = "general estimator", col = "blue")
+abline(c(0,1), col = "black")
+
+points(x, yl, col = "red")
+
+legend(5,3, legend = c("Bianconi", "Liebenau"), fill = c("blue", "red"))
 ```
 
 ## Single reverse triangle
@@ -104,18 +122,27 @@ n <- seq(5, 15, by = 2)
 onetriangle <- choose(n,3)
 x <- log(onetriangle[1:6])
 
-triangle_dd <- function(x){
-  number_of_graphs_dd(c(rep(x - 1,x - 3), rep(x - 1 - 2, 3)))
+triangle_dd_b <- function(x){
+  number_of_graphs_dd(c(rep(x - 1,x - 3), rep(x - 1 - 2, 3)), type = "Bianconi")
 }
 
-y0 <- sapply(n, triangle_dd)
+triangle_dd_l <- function(x){
+  number_of_graphs_dd(c(rep(x - 1,x - 3), rep(x - 1 - 2, 3)), type = "Liebenau")
+}
+
+yb <- sapply(n, triangle_dd_b)
+yl <- sapply(n, triangle_dd_l)
 ```
 
 ```{r reverse-triangle-plot}
 par(pty="s")
 
-plot(x, y0, xlim = c(0, 20), ylim = c(0, 20), asp = 1, xlab = "analytic expression", ylab = "general estimator")
-abline(c(0,1), col = "blue")
+plot(x, yb, xlim = c(0, 20), ylim = c(0, 20), asp = 1, xlab = "analytic expression", ylab = "general estimator", col = "blue")
+abline(c(0,1), col = "black")
+
+points(x, yl, col = "red")
+
+legend(10,5, legend = c("Bianconi", "Liebenau"), fill = c("blue", "red"))
 ```
 
 It seems that the base measure for the sorted degree sequence is more accurately measured for sparse graphs than dense graphs. Let's look now at graphs in the middle, regular graphs where the degree is n/2. 
@@ -133,18 +160,27 @@ lambda <- d / (n - 1)
 regulargraphs <- sqrt(2) * exp(0.25) * (lambda^lambda * (1-lambda)^(1-lambda))^choose(n,2) * (choose(n-1,d)^n)
 x <- log(regulargraphs)
 
-regular_dd <- function(x){
-  number_of_graphs_dd(rep(x/2,x))
+regular_dd_b <- function(x){
+  number_of_graphs_dd(rep((x - 1)/2,x), type = "Bianconi")
 }
 
-y0 <- sapply(n, regular_dd)
+regular_dd_l <- function(x){
+  number_of_graphs_dd(rep((x - 1)/2,x), type = "Liebenau")
+}
+
+yb <- sapply(n, regular_dd_b)
+yl <- sapply(n, regular_dd_l)
 ```
 
 ```{r regular-graph-plot}
 par(pty="s")
 
-plot(x, y0, xlim = c(0, 180), ylim = c(0, 180), asp = 1, xlab = "analytic expression", ylab = "general estimator")
-abline(c(0,1), col = "blue")
+plot(x, yb, xlim = c(0, 180), ylim = c(0, 180), asp = 1, xlab = "analytic expression", ylab = "general estimator", col = "blue")
+abline(c(0,1), col = "black")
+
+points(x, yl, col = "red")
+
+legend(25,150, legend = c("Bianconi", "Liebenau"), fill = c("blue", "red"))
 ```
 
 The base measure seems to accurately compute the sorted degree sequence for a regular graph midway between sparse and dense. 
@@ -158,6 +194,8 @@ n = 15
 replicates = 400
 
 mech_net_gnp = purrr::partial(igraph::sample_gnp, n = !!n, ... = , directed = FALSE, loops = FALSE)
+
+box_replicates <- 10
 ```
 
 ## Example 1
@@ -169,22 +207,20 @@ Likelihood stat: number of edges
 
 ```{r example1, cache=TRUE, eval = TRUE, dependson=c("libraries", "metaparameters")}
 true_value <- 0.1
-theta_p <- rep(seq(0.01, 0.2, by = 0.01), 5)
+theta_p <- rep(seq(0.01, 0.2, by = 0.01), box_replicates)
 theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = FALSE)
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = FALSE, type = c("Bianconi", "Liebenau"))
 
 parallel::stopCluster(cl)
 ```
 
-```{r example1-plot, eval = TRUE, dependson = "example1"}
-library(ggplot2)
+```{r example1-plot, eval = TRUE, dependson = "example1", cache.rebuild=TRUE}
+g_tidy <- StartNetwork::tidy_g(g)
 
-df <- data.frame(parameter = theta_p, KL = g)
-
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 1") + geom_vline(xintercept = true_value)
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
 ```
 
 ## Example 2
@@ -196,20 +232,20 @@ Likelihood stat: number of edges
 
 ```{r example2, cache=TRUE, eval = TRUE, dependson=c("libraries", "metaparameters")}
 true_value <- 0.9
-theta_p <- rep(seq(0.80, 0.99, by = 0.01), 5)
+theta_p <- rep(seq(0.85, 0.95, by = 0.01), box_replicates)
 theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = FALSE)
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = FALSE, type = c("Bianconi", "Liebenau"))
 
 parallel::stopCluster(cl)
 ```
 
 ```{r example2-plot, dependson = "example2", eval = TRUE}
-df <- data.frame(parameter = theta_p, KL = g)
+g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 2") + geom_vline(xintercept = true_value)
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
 ```
 
 ## Example 3
@@ -221,20 +257,20 @@ Likelihood stat: number of edges
 
 ```{r example3, cache=TRUE, eval = TRUE, dependson=c("libraries", "metaparameters")}
 true_value <- 0.5
-theta_p <- rep(seq(0.3, 0.7, by = 0.01), 5)
+theta_p <- rep(seq(0.4, 0.6, by = 0.01), box_replicates)
 theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = FALSE)
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = FALSE, type = c("Bianconi", "Liebenau"))
 
 parallel::stopCluster(cl)
 ```
 
-```{r example3-plot, dependson = "example2", eval = TRUE}
-df <- data.frame(parameter = theta_p, KL = g)
+```{r example3-plot, dependson = "example3", eval = TRUE}
+g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 3") + geom_vline(xintercept = true_value)
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
 ```
 
 The graphs don't look correct in examples 2 and 3. This is because the space of dense graphs is counted inaccurately when the equation of @bianconi2009entropy is naively applied, we map the space of dense graphs to the space of sparse graphs. In other words, we pretend a dense graph is really a sparse graph by converting all non-edges to edges and all edges to non-edges. The conversion from the original degree sequence $d$ to the new degree sequence $d^*$ is the following (where $n$ is the number of nodes):
@@ -251,20 +287,20 @@ Likelihood stat: number of edges
 
 ```{r example4, cache=TRUE, eval = TRUE}
 true_value <- 0.9
-theta_p <- rep(seq(0.80, 0.99, by = 0.01), 5)
+theta_p <- rep(seq(0.85, 0.95, by = 0.01), box_replicates)
 theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = TRUE)
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = TRUE, type = c("Bianconi", "Liebenau"))
 
 parallel::stopCluster(cl)
 ```
 
 ```{r example4-plot, eval = TRUE}
-df <- data.frame(parameter = theta_p, KL = g)
+g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 4") + geom_vline(xintercept = true_value)
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
 ```
 
 ## Example 5
@@ -276,20 +312,20 @@ Likelihood stat: number of edges
 
 ```{r example5, cache=TRUE, eval = TRUE}
 true_value <- 0.5
-theta_p <- rep(seq(0.3, 0.7, by = 0.01), 5)
+theta_p <- rep(seq(0.4, 0.6, by = 0.01), 5)
 theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = TRUE)
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = TRUE, type = c("Bianconi", "Liebenau"))
 
 parallel::stopCluster(cl)
 ```
 
 ```{r example5-plot, eval = TRUE}
-df <- data.frame(parameter = theta_p, KL = g)
+g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 5") + geom_vline(xintercept = true_value)
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
 ```
 
 We have successfully retrieved the parameter for a dense graph. To check
@@ -302,18 +338,27 @@ n <- seq(5, 15, by = 2)
 onetriangle <- choose(n,3)
 x <- log(onetriangle[1:6])
 
-triangle_dd <- function(x){
-  number_of_graphs_dd(c(rep(x - 1,x - 3), rep(x - 1 - 2, 3)), mirror = TRUE)
+triangle_dd_b <- function(x){
+  number_of_graphs_dd(c(rep(x - 1,x - 3), rep(x - 1 - 2, 3)), mirror = TRUE, type = "Bianconi")
 }
 
-ym <- sapply(n, triangle_dd)
+triangle_dd_l <- function(x){
+  number_of_graphs_dd(c(rep(x - 1,x - 3), rep(x - 1 - 2, 3)), mirror = TRUE, type = "Liebenau")
+}
+
+yb <- sapply(n, triangle_dd_b)
+yl <- sapply(n, triangle_dd_l)
 ```
 
 ```{r reverse-triangle2-plot}
 par(pty="s")
 
-plot(x, ym, xlim = c(0, 20), ylim = c(0, 20), asp = 1, xlab = "analytic expression", ylab = "general estimator")
-abline(c(0,1), col = "blue")
+plot(x, yb, xlim = c(0, 20), ylim = c(0, 20), asp = 1, xlab = "analytic expression", ylab = "general estimator", col = "blue")
+abline(c(0,1), col = "black")
+
+points(x, yl, col = "red")
+
+legend(10,4, legend = c("Bianconi", "Liebenau"), fill = c("blue", "red"))
 ```
 
 # ERGM as mechanistic models
@@ -330,20 +375,20 @@ n <- 15
 mech_net_ergm <- purrr::partial(mech_net_ergm_n, n = !!n)
 
 true_value <- 0.1
-theta_p <- rep(seq(0.01, 0.2, by = 0.01), 5)
+theta_p <- rep(seq(0.05, 0.15, by = 0.01), box_replicates)
 theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize, mirror = TRUE)
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize, mirror = TRUE, type = c("Bianconi", "Liebenau"))
 
 parallel::stopCluster(cl)
 ```
 
-```{r example6-plot, eval = TRUE}
-df <- data.frame(parameter = theta_p, KL = g)
+```{r example6-plot, eval = TRUE, dependson="example6"}
+g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 6") + geom_vline(xintercept = true_value)
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
 ```
 
 ## Example 7
@@ -359,20 +404,22 @@ n <- 15
 mech_net_ergm <- purrr::partial(mech_net_ergm_n, n = !!n)
 
 true_value <- 0.9
-theta_p <- rep(seq(0.80, 0.99, by = 0.01), 5)
+theta_p <- rep(seq(0.85, 0.95, by = 0.01), box_replicates)
 theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize, mirror = TRUE)
+g7 <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize, mirror = TRUE, type = c("Bianconi", "Liebenau"))
 
 parallel::stopCluster(cl)
 ```
 
-```{r example7-plot, eval = TRUE}
-df <- data.frame(parameter = theta_p, KL = g)
+```{r example7-plot, eval = TRUE, dependson = "example7", cache = FALSE}
+library(ggplot2)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 7") + geom_vline(xintercept = true_value)
+g_tidy <- StartNetwork::tidy_g(g7)
+
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
 ```
 
 ## Example 8
@@ -382,26 +429,28 @@ Statistical model: ERGM
 Integral stat: sorted degree sequence  
 Likelihood stat: number of edges
 
-```{r example8, eval = TRUE}
+```{r example8, cache = TRUE, eval = TRUE}
 n <- 15
 
 mech_net_ergm <- purrr::partial(mech_net_ergm_n, n = !!n)
 
 true_value <- 0.5
-theta_p <- rep(seq(0.3, 0.7, by = 0.01), 5)
+theta_p <- rep(seq(0.4, 0.6, by = 0.01), box_replicates)
 theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize, mirror = TRUE)
+g8 <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_ergm, lstat = igraph::gsize, mirror = TRUE, type = c("Bianconi", "Liebenau"))
 
 parallel::stopCluster(cl)
 ```
 
-```{r example8-plot, eval = TRUE}
-df <- data.frame(parameter = theta_p, KL = g)
+```{r example8-plot, eval = TRUE, dependson = "example8"}
+library(ggplot2)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 8") + geom_vline(xintercept = true_value)
+g_tidy <- StartNetwork::tidy_g(g8)
+
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
 ```
 
 ```{r}
