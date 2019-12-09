@@ -36,15 +36,16 @@ theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE)
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE, type = c("Bianconi", "Liebenau"))
 
 parallel::stopCluster(cl)
 ```
 
 ```{r triangles1-plot, eval = TRUE}
-df <- data.frame(parameter = theta_p, KL = g)
+g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 1") + geom_vline(xintercept = true_value)
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
 ```
 
 ## Triangles 2
@@ -58,15 +59,16 @@ theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE)
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE, type = c("Bianconi", "Liebenau"))
 
 parallel::stopCluster(cl)
 ```
 
-```{r triangles2-plot, eval = TRUE}
-df <- data.frame(parameter = theta_p, KL = g)
+```{r triangles2-plot}
+g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 2") + geom_vline(xintercept = true_value)
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
 ```
 
 ## Triangles 3
@@ -75,44 +77,71 @@ ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + gg
 mech_net_triangles <- purrr::partial(mech_net_triangles_n, n = !!n)
 
 true_value <- 0.3
-theta_p <- rep(seq(0.2, 0.4, by = 0.02), 5)
+theta_p <- rep(seq(0.04, 0.4, by = 0.02), 5)
 theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE)
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE, type = c("Bianconi", "Liebenau"))
 
 parallel::stopCluster(cl)
 ```
 
-```{r triangles3-plot, eval = TRUE}
-df <- data.frame(parameter = theta_p, KL = g)
+```{r triangles3-plot}
+g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 3") + geom_vline(xintercept = true_value)
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
 ```
 
 ## Triangles 4
 
 ```{r triangles4}
-n <- 25
-replicates <- 1000
+n <- 40
+replicates <- 4000
 mech_net_triangles <- purrr::partial(mech_net_triangles_n, n = !!n)
 
 true_value <- 0.3
-theta_p <- rep(seq(0.25, 0.35, by = 0.05), 5)
+theta_p <- rep(seq(0.05, 0.35, by = 0.05), 5)
 theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parSapply(cl, theta_p, StartNetwork::KL_net, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE)
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE, type = c("Bianconi", "Liebenau"))
 
 parallel::stopCluster(cl)
 ```
 
-```{r triangles4-plot, eval = TRUE}
-df <- data.frame(parameter = theta_p, KL = g)
+```{r triangles4-plot}
+g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(df) + aes(x = parameter, y = KL, group = parameter) + geom_boxplot() + ggtitle("Example 4") + geom_vline(xintercept = true_value)
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
+```
+
+## Triangles 5
+
+```{r triangles5}
+n <- 60
+replicates <- 20000
+mech_net_triangles <- purrr::partial(mech_net_triangles_n, n = !!n)
+
+true_value <- 0.3
+theta_p <- rep(seq(0.05, 0.35, by = 0.05), 5)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE, type = c("Bianconi", "Liebenau"))
+
+parallel::stopCluster(cl)
+```
+
+```{r triangles5-plot}
+g_tidy <- StartNetwork::tidy_g(g)
+
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
 ```
 
 ```{r session}

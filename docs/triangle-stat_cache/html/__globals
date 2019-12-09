@@ -1,10 +1,12 @@
 libraries	library	set.seed
-triangles1	::	!	length	log	mech_net_triangles_n	n	rep	replicates	seq
-triangles1-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
-triangles2	::	!	length	log	mech_net_triangles_n	n	rep	replicates	seq
-triangles2-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
+triangles1	::	!	c	length	log	mech_net_triangles_n	n	rep	replicates	seq
+triangles1-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
+triangles2	::	!	c	length	log	mech_net_triangles_n	n	rep	replicates	seq
+triangles2-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
 session	sessionInfo
-triangles3	::	!	length	log	mech_net_triangles_n	n	rep	replicates	seq
-triangles3-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
-triangles4	::	!	length	log	mech_net_triangles_n	rep	seq
-triangles4-plot	aes	data.frame	g	geom_boxplot	geom_vline	ggplot	ggtitle	KL	parameter	theta_p	true_value
+triangles3	::	!	c	length	log	mech_net_triangles_n	n	rep	replicates	seq
+triangles3-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
+triangles4	::	!	c	length	log	mech_net_triangles_n	rep	seq
+triangles4-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
+triangles5	::	!	c	length	log	mech_net_triangles_n	rep	seq
+triangles5-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value

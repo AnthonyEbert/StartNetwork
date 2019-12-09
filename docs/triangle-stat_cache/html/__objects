@@ -1,10 +1,12 @@
 libraries	n	replicates
 triangles1	cl	g	mech_net_triangles	theta_p	theta_s	true_value
-triangles1-plot	df
+triangles1-plot	g_tidy
 triangles2	cl	g	mech_net_triangles	theta_p	theta_s	true_value
-triangles2-plot	df
+triangles2-plot	g_tidy
 session	
 triangles3	cl	g	mech_net_triangles	theta_p	theta_s	true_value
-triangles3-plot	df
+triangles3-plot	g_tidy
 triangles4	cl	g	mech_net_triangles	n	replicates	theta_p	theta_s	true_value
-triangles4-plot	df
+triangles4-plot	g_tidy
+triangles5	cl	g	mech_net_triangles	n	replicates	theta_p	theta_s	true_value
+triangles5-plot	g_tidy
