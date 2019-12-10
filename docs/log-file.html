@@ -390,7 +390,8 @@ g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s,
 parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>g_tidy &lt;- StartNetwork::tidy_g(g)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = &quot;free_y&quot;)</code></pre>
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))</code></pre>
 <p><img src="log-file_files/figure-html/example1-plot-1.png" width="672" /></p>
 </div>
 <div id="example-2" class="section level2">
@@ -410,7 +411,8 @@ g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s,
 parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>g_tidy &lt;- StartNetwork::tidy_g(g)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = &quot;free_y&quot;)</code></pre>
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))</code></pre>
 <p><img src="log-file_files/figure-html/example2-plot-1.png" width="672" /></p>
 </div>
 <div id="example-3" class="section level2">
@@ -430,7 +432,8 @@ g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s,
 parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>g_tidy &lt;- StartNetwork::tidy_g(g)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = &quot;free_y&quot;)</code></pre>
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))</code></pre>
 <p><img src="log-file_files/figure-html/example3-plot-1.png" width="672" /></p>
 <p>The graphs don’t look correct in examples 2 and 3. This is because the space of dense graphs is counted inaccurately when the equation of <span class="citation">Bianconi (2009)</span> is naively applied, we map the space of dense graphs to the space of sparse graphs. In other words, we pretend a dense graph is really a sparse graph by converting all non-edges to edges and all edges to non-edges. The conversion from the original degree sequence <span class="math inline">\(d\)</span> to the new degree sequence <span class="math inline">\(d^*\)</span> is the following (where <span class="math inline">\(n\)</span> is the number of nodes): <span class="math display">\[
 d^* = n - d - 1. 
@@ -453,7 +456,8 @@ g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s,
 parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>g_tidy &lt;- StartNetwork::tidy_g(g)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = &quot;free_y&quot;)</code></pre>
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))</code></pre>
 <p><img src="log-file_files/figure-html/example4-plot-1.png" width="672" /></p>
 </div>
 <div id="example-5" class="section level2">
@@ -473,7 +477,8 @@ g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s,
 parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>g_tidy &lt;- StartNetwork::tidy_g(g)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = &quot;free_y&quot;)</code></pre>
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))</code></pre>
 <p><img src="log-file_files/figure-html/example5-plot-1.png" width="672" /></p>
 <p>We have successfully retrieved the parameter for a dense graph. To check</p>
 </div>
@@ -528,7 +533,8 @@ g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s,
 parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>g_tidy &lt;- StartNetwork::tidy_g(g)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = &quot;free_y&quot;)</code></pre>
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))</code></pre>
 <p><img src="log-file_files/figure-html/example6-plot-1.png" width="672" /></p>
 </div>
 <div id="example-7" class="section level2">
@@ -554,7 +560,8 @@ parallel::stopCluster(cl)</code></pre>
 
 g_tidy &lt;- StartNetwork::tidy_g(g7)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = &quot;free_y&quot;)</code></pre>
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))</code></pre>
 <p><img src="log-file_files/figure-html/example7-plot-1.png" width="672" /></p>
 </div>
 <div id="example-8" class="section level2">
@@ -580,7 +587,8 @@ parallel::stopCluster(cl)</code></pre>
 
 g_tidy &lt;- StartNetwork::tidy_g(g8)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = &quot;free_y&quot;)</code></pre>
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))</code></pre>
 <pre><code>## Warning: Removed 3 rows containing non-finite values (stat_boxplot).</code></pre>
 <p><img src="log-file_files/figure-html/example8-plot-1.png" width="672" /></p>
 <pre class="r"><code>sessionInfo()</code></pre>

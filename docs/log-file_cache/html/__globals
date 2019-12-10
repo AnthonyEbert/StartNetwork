@@ -10,20 +10,20 @@ regular-graph	^	choose	exp	log	number_of_graphs_dd	rep	sapply	seq	sqrt
 regular-graph-plot	abline	c	legend	par	plot	points	x	yb	yl
 metaparameters	::	!
 example1	::	box_replicates	c	log	mech_net_gnp	rep	replicates	seq
-example1-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	type	value
+example1-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
 example2	::	box_replicates	c	log	mech_net_gnp	rep	replicates	seq
-example2-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	type	value
+example2-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
 example3	::	box_replicates	c	log	mech_net_gnp	rep	replicates	seq
-example3-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	type	value
+example3-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
 example4	::	box_replicates	c	log	mech_net_gnp	rep	replicates	seq
-example4-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	type	value
+example4-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
 example5	::	c	log	mech_net_gnp	rep	replicates	seq
-example5-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	type	value
+example5-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
 reverse-triangle2	c	choose	log	number_of_graphs_dd	rep	sapply	seq
 reverse-triangle2-plot	abline	c	legend	par	plot	points	x	yb	yl
 example6	::	!	box_replicates	c	log	mech_net_ergm_n	rep	replicates	seq
-example6-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	type	value
+example6-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
 example7	::	!	box_replicates	c	log	mech_net_ergm_n	rep	replicates	seq
 example8	::	!	box_replicates	c	log	mech_net_ergm_n	rep	replicates	seq
-example8-plot	::	~	aes	facet_wrap	g8	geom_boxplot	ggplot	interaction	library	parameter	type	value
+example8-plot	::	~	aes	facet_wrap	g8	geom_boxplot	ggplot	interaction	library	parameter	true_value	type	value
 unnamed-chunk-1	sessionInfo

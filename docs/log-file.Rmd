@@ -220,7 +220,8 @@ parallel::stopCluster(cl)
 ```{r example1-plot, eval = TRUE, dependson = "example1", cache.rebuild=TRUE}
 g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
 ```
 
 ## Example 2
@@ -245,7 +246,8 @@ parallel::stopCluster(cl)
 ```{r example2-plot, dependson = "example2", eval = TRUE}
 g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
 ```
 
 ## Example 3
@@ -270,7 +272,8 @@ parallel::stopCluster(cl)
 ```{r example3-plot, dependson = "example3", eval = TRUE}
 g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
 ```
 
 The graphs don't look correct in examples 2 and 3. This is because the space of dense graphs is counted inaccurately when the equation of @bianconi2009entropy is naively applied, we map the space of dense graphs to the space of sparse graphs. In other words, we pretend a dense graph is really a sparse graph by converting all non-edges to edges and all edges to non-edges. The conversion from the original degree sequence $d$ to the new degree sequence $d^*$ is the following (where $n$ is the number of nodes):
@@ -300,7 +303,8 @@ parallel::stopCluster(cl)
 ```{r example4-plot, eval = TRUE}
 g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
 ```
 
 ## Example 5
@@ -325,7 +329,8 @@ parallel::stopCluster(cl)
 ```{r example5-plot, eval = TRUE}
 g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
 ```
 
 We have successfully retrieved the parameter for a dense graph. To check
@@ -388,7 +393,8 @@ parallel::stopCluster(cl)
 ```{r example6-plot, eval = TRUE, dependson="example6"}
 g_tidy <- StartNetwork::tidy_g(g)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
 ```
 
 ## Example 7
@@ -419,7 +425,8 @@ library(ggplot2)
 
 g_tidy <- StartNetwork::tidy_g(g7)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
 ```
 
 ## Example 8
@@ -450,7 +457,8 @@ library(ggplot2)
 
 g_tidy <- StartNetwork::tidy_g(g8)
 
-ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL) + facet_wrap(~key, scales = "free_y")
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
 ```
 
 ```{r}
