@@ -1,6 +1,6 @@
 
 #' @export
-tidy_g <- function(g){
+tidy_g <- function(g, tidy = TRUE){
 
   lik_sum_stats <- sapply(g, function(x){attr(x, "lik_sum_stats")})
 
@@ -11,6 +11,8 @@ tidy_g <- function(g){
       sum_stat = lik_sum_stats,
       parameter = theta_p
     )
+
+  if(!tidy){return(g_df)}
 
   g_tidy <- g_df %>%
     tidyr::gather( , , -parameter) %>%
