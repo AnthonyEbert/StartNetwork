@@ -1,0 +1,10 @@
+libraries	
+metaparameters	box_replicates	mech_net_gnp	n	replicates
+example1	cl	g	param_range	theta_p	theta_s	true_value
+example1-plot	g_df
+example2	cl	g	param_range	theta_p	theta_s	true_value
+example2-plot	g_df
+example3	cl	g	param_range	theta_p	theta_s	true_value
+example3-plot	g_df
+example4	cl	g	param_range	theta_p	theta_s	true_value
+example4-plot	g_df

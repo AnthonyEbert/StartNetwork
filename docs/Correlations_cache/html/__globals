@@ -1,0 +1,10 @@
+libraries	library	set.seed
+metaparameters	::	!
+example1	::	box_replicates	c	log	mech_net_gnp	rep	replicates	seq
+example1-plot	::	%>%	==	filter	g	param_range	parameter	select	sum_stat
+example2	::	box_replicates	c	log	mech_net_gnp	rep	replicates	seq
+example2-plot	::	%>%	==	filter	g	param_range	parameter	select	sum_stat
+example3	::	box_replicates	c	log	mech_net_gnp	rep	replicates	seq
+example3-plot	::	%>%	==	filter	g	param_range	parameter	select	sum_stat
+example4	::	box_replicates	c	log	mech_net_gnp	rep	replicates	seq
+example4-plot	::	%>%	==	filter	g	param_range	parameter	select	sum_stat

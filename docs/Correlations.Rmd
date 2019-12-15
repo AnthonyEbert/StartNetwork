@@ -1,0 +1,133 @@
+---
+title: "Correlations"
+author: "Anthony Ebert"
+date: "10/12/2019"
+output: 
+  html_document:
+    toc: true
+    self_contained: false
+    code_folding: hide
+bibliography: link.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, cache.rebuild = FALSE, autodep = TRUE)
+```
+
+```{r libraries, cache = TRUE}
+set.seed(1)
+
+library(StartNetwork)
+library(parallel)
+library(ggplot2)
+library(dplyr)
+```
+
+```{r metaparameters, cache = TRUE}
+n = 15
+replicates = 400
+
+mech_net_gnp = purrr::partial(igraph::sample_gnp, n = !!n, ... = , directed = FALSE, loops = FALSE)
+
+box_replicates = 100
+```
+
+# Example 1
+
+```{r example1, cache=TRUE, eval = TRUE, dependson=c("libraries", "metaparameters")}
+true_value <- 0.1
+param_range <- seq(0.05, 0.15, by = 0.05)
+theta_p <- rep(param_range, box_replicates)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = TRUE, type = c("Bianconi", "Liebenau"))
+
+parallel::stopCluster(cl)
+```
+
+```{r example1-plot, eval = TRUE, dependson = "example1", cache.rebuild=TRUE}
+g_df <- StartNetwork::tidy_g(g, tidy = FALSE)
+
+GGally::ggpairs(g_df %>% filter(parameter == param_range[1]) %>% select(-sum_stat, -parameter), title = param_range[1])
+
+GGally::ggpairs(g_df %>% filter(parameter == param_range[2]) %>% select(-sum_stat, -parameter), title = param_range[2])
+
+GGally::ggpairs(g_df %>% filter(parameter == param_range[3]) %>% select(-sum_stat, -parameter), title = param_range[3])
+```
+
+# Example 2
+
+```{r example2, cache=TRUE, eval = TRUE, dependson=c("libraries", "metaparameters")}
+true_value <- 0.9
+param_range <- seq(0.85, 0.95, by = 0.05)
+theta_p <- rep(param_range, box_replicates)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = TRUE, type = c("Bianconi", "Liebenau"))
+
+parallel::stopCluster(cl)
+```
+
+```{r example2-plot, eval = TRUE, dependson = "example2", cache.rebuild=TRUE}
+g_df <- StartNetwork::tidy_g(g, tidy = FALSE)
+
+GGally::ggpairs(g_df %>% filter(parameter == param_range[1]) %>% select(-sum_stat, -parameter), title = param_range[1])
+
+GGally::ggpairs(g_df %>% filter(parameter == param_range[2]) %>% select(-sum_stat, -parameter), title = param_range[2])
+
+GGally::ggpairs(g_df %>% filter(parameter == param_range[3]) %>% select(-sum_stat, -parameter), title = param_range[3])
+```
+
+# Example 3
+
+```{r example3, cache=TRUE, eval = TRUE, dependson=c("libraries", "metaparameters")}
+true_value <- 0.5
+param_range <- seq(0.45, 0.55, by = 0.05)
+theta_p <- rep(param_range, box_replicates)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = TRUE, type = c("Bianconi", "Liebenau"))
+
+parallel::stopCluster(cl)
+```
+
+```{r example3-plot, eval = TRUE, dependson = "example3", cache.rebuild=TRUE, warning=FALSE}
+g_df <- StartNetwork::tidy_g(g, tidy = FALSE)
+
+GGally::ggpairs(g_df %>% filter(parameter == param_range[1]) %>% select(-sum_stat, -parameter), title = param_range[1])
+
+GGally::ggpairs(g_df %>% filter(parameter == param_range[2]) %>% select(-sum_stat, -parameter), title = param_range[2])
+
+GGally::ggpairs(g_df %>% filter(parameter == param_range[3]) %>% select(-sum_stat, -parameter), title = param_range[3])
+```
+
+# Example 4
+
+```{r example4, cache=TRUE, eval = TRUE, dependson=c("libraries", "metaparameters")}
+true_value <- 0.55
+param_range <- seq(0.50, 0.60, by = 0.05)
+theta_p <- rep(param_range, box_replicates)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp, lstat = igraph::gsize, mirror = TRUE, type = c("Bianconi", "Liebenau"))
+
+parallel::stopCluster(cl)
+```
+
+```{r example4-plot, eval = TRUE, dependson = "example4", cache.rebuild=TRUE}
+g_df <- StartNetwork::tidy_g(g, tidy = FALSE)
+
+GGally::ggpairs(g_df %>% filter(parameter == param_range[1]) %>% select(-sum_stat, -parameter), title = param_range[1])
+
+GGally::ggpairs(g_df %>% filter(parameter == param_range[2]) %>% select(-sum_stat, -parameter), title = param_range[2])
+
+GGally::ggpairs(g_df %>% filter(parameter == param_range[3]) %>% select(-sum_stat, -parameter), title = param_range[3])
+```
