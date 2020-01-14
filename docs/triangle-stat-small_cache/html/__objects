@@ -1,0 +1,7 @@
+libraries	datapoints	n	replicates
+triangles1	cl	g	mech_net_triangles	theta_p	theta_s	true_value
+triangles1-plot	g_tidy
+triangles2	cl	g	mech_net_triangles	theta_p	theta_s	true_value
+triangles2-plot	g_tidy
+triangles3	cl	g	mech_net_triangles	theta_p	theta_s	true_value
+triangles3-plot	g_tidy

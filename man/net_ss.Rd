@@ -2,10 +2,10 @@
 % Please edit documentation in R/KL_net.R
 \name{net_ss}
 \alias{net_ss}
-\title{KL Divergence of mechanistic and statistical network models}
+\title{Generates list of degree sequences and summary statistics for a mechanistic model}
 \usage{
 net_ss(theta_m, replicates = 1000, sorted = TRUE, mech_net, lstat,
-  lapply_opt = TRUE)
+  lapply_opt = TRUE, ergm = FALSE)
 }
 \arguments{
 \item{theta_m}{numeric mechanistic model parameters}
@@ -21,7 +21,7 @@ net_ss(theta_m, replicates = 1000, sorted = TRUE, mech_net, lstat,
 \item{lapply_opt}{boolean internal}
 }
 \description{
-KL Divergence of mechanistic and statistical network models
+Generates list of degree sequences and summary statistics for a mechanistic model
 }
 \examples{
 

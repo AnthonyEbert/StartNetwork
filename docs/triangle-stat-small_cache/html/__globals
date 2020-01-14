@@ -1,0 +1,7 @@
+libraries	library	set.seed
+triangles1	::	!	c	datapoints	length	log	mech_net_triangles_n	n	rep	replicates	seq
+triangles1-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
+triangles2	::	!	c	datapoints	length	log	mech_net_triangles_n	n	rep	replicates	seq
+triangles2-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
+triangles3	::	!	c	datapoints	length	log	mech_net_triangles_n	n	rep	replicates	seq
+triangles3-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value

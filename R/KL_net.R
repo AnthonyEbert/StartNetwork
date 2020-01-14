@@ -1,7 +1,7 @@
 
 # net_ss <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRUE, mech_net, mech_args, lstat, lapply_opt = TRUE, ds_return = FALSE, pmf = NULL, mirror = TRUE){
 
-#' KL Divergence of mechanistic and statistical network models
+#' Generates list of degree sequences and summary statistics for a mechanistic model
 #' @param theta_m numeric mechanistic model parameters
 #' @param replicates numeric number of replicates
 #' @param sorted logical whether to consider the sorted or unsorted degree sequence as the integral statistic
@@ -29,17 +29,25 @@
 #' )
 #'
 #' @export
-net_ss <- function(theta_m, replicates = 1000, sorted = TRUE, mech_net, lstat, lapply_opt = TRUE){
+net_ss <- function(theta_m, replicates = 1000, sorted = TRUE, mech_net, lstat, lapply_opt = TRUE, ergm = FALSE){
 
   stopifnot(is.numeric(replicates))
   stopifnot(replicates %% 1 == 0)
   stopifnot(replicates > 0)
   stopifnot(is.logical(sorted))
 
-  if(sorted){
-    dstat <- function(x){sort.int(as.numeric(igraph::degree(x)))}
+  if(!ergm){
+    if(sorted){
+      dstat <- function(x){sort.int(as.numeric(igraph::degree(x)))}
+    } else {
+      dstat <- function(x){as.numeric(igraph::degree(x))}
+    }
   } else {
-    dstat <- function(x){as.numeric(igraph::degree(x))}
+    if(sorted){
+      dstat <- function(x){sort.int(as.numeric(igraph::degree(ergm_to_igraph(x))))}
+    } else {
+      dstat <- function(x){as.numeric(igraph::degree(ergm_to_igraph(x)))}
+    }
   }
 
   stat_func <- purrr::partial(stat_constructor, dstat = !!dstat, lstat = !!lstat)

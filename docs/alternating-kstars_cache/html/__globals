@@ -1,0 +1,13 @@
+libraries	::	!	library	set.seed	sim_ergm_gwdegree
+triangles1	::	~	as.numeric	c	datapoints	mech_net_gwdegree	rep	replicates	seq
+triangles1-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	theta_s	type	value
+triangles2	::	c	datapoints	length	mech_net_gwdegree	rep	replicates	seq
+triangles2-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	theta_s	type	value
+triangles3	::	c	datapoints	length	mech_net_gwdegree	rep	replicates	seq
+triangles3-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	theta_s	type	value
+gwdegrees1	::	~	as.numeric	c	datapoints	mech_net_gwdegree	rep	replicates	seq
+gwdegrees1-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	theta_s	type	value
+gwdegrees2	::	~	as.numeric	c	datapoints	mech_net_gwdegree	rep	replicates	seq
+gwdegrees2-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	theta_s	type	value
+gwdegrees3	::	~	as.numeric	c	datapoints	mech_net_gwdegree	rep	replicates	seq
+gwdegrees3-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	theta_s	type	value

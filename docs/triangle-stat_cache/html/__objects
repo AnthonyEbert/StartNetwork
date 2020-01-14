@@ -10,3 +10,5 @@ triangles4	cl	g	mech_net_triangles	n	replicates	theta_p	theta_s	true_value
 triangles4-plot	g_tidy
 triangles5	cl	g	mech_net_triangles	n	replicates	theta_p	theta_s	true_value
 triangles5-plot	g_tidy
+triangles6	cl	g	mech_net_triangles	n	replicates	theta_p	theta_s	true_value
+triangles6-plot	g_tidy
