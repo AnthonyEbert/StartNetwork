@@ -52,3 +52,10 @@ sim_ergm_gwdegree <- function(p, n, nsim = 1, ...){
 
 #' @export
 mech_net_gwdegree_n <- purrr::compose(ergm_to_igraph, sim_ergm_gwdegree)
+
+#' @export
+sim_ergm_altkstar <- function(p, n, nsim = 1, ...){
+  ergg <- ergm::simulate_formula(network::network(n, directed = FALSE) ~ altkstar(log(10), fixed = TRUE), coef = c(p), nsim = nsim, ...)
+  return(ergg)
+}
+

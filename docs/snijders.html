@@ -13,18 +13,18 @@
 
 <meta name="date" content="2019-04-12" />
 
-<title>Geometrically weighted degree distribution</title>
+<title>Alternating K-stars (Snijders)</title>
 
-<script src="alternating-kstars_files/jquery-1.11.3/jquery.min.js"></script>
+<script src="snijders_files/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="alternating-kstars_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
-<script src="alternating-kstars_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
-<script src="alternating-kstars_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
-<script src="alternating-kstars_files/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="alternating-kstars_files/navigation-1.1/tabsets.js"></script>
-<script src="alternating-kstars_files/navigation-1.1/codefolding.js"></script>
-<link href="alternating-kstars_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
-<script src="alternating-kstars_files/highlightjs-9.12.0/highlight.js"></script>
+<link href="snijders_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="snijders_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="snijders_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="snijders_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="snijders_files/navigation-1.1/tabsets.js"></script>
+<script src="snijders_files/navigation-1.1/codefolding.js"></script>
+<link href="snijders_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="snijders_files/highlightjs-9.12.0/highlight.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -190,7 +190,7 @@ summary {
 
 
 
-<h1 class="title toc-ignore">Geometrically weighted degree distribution</h1>
+<h1 class="title toc-ignore">Alternating K-stars (Snijders)</h1>
 <h4 class="author">Anthony Ebert</h4>
 <h4 class="date">04/12/2019</h4>
 
@@ -198,9 +198,9 @@ summary {
 
 <div id="TOC">
 <ul>
-<li><a href="#gwdegrees-1">gwdegrees 1</a></li>
-<li><a href="#gwdegrees-2">gwdegrees 2</a></li>
-<li><a href="#gwdegrees-3">gwdegrees 3</a></li>
+<li><a href="#altkstar-1">altkstar 1</a></li>
+<li><a href="#altkstar-2">altkstar 2</a></li>
+<li><a href="#altkstar-3">altkstar 3</a></li>
 </ul>
 </div>
 
@@ -211,57 +211,57 @@ library(parallel)
 library(ggplot2)
 
 n = 12
-replicates = 800
+replicates = 400
 datapoints = 5
 
-mech_net_gwdegree &lt;- purrr::partial(sim_ergm_gwdegree, n = !!n)</code></pre>
-<div id="gwdegrees-1" class="section level2">
-<h2>gwdegrees 1</h2>
+mech_net_gwdegree &lt;- purrr::partial(sim_ergm_altkstar, n = !!n)</code></pre>
+<div id="altkstar-1" class="section level2">
+<h2>altkstar 1</h2>
 <pre class="r"><code>theta_s &lt;- 0.5
 theta_p &lt;- rep(seq(0.3, 0.7, by = 0.1), datapoints)
 
 cl &lt;- parallel::makeCluster(parallel::detectCores())
 
-g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gwdegree, lstat = function(x){as.numeric(ergm::summary_formula(x ~ gwdegree(10, fixed = TRUE)))}, mirror = TRUE, type = c(&quot;Bianconi&quot;, &quot;Liebenau&quot;), ergm = TRUE)
+g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gwdegree, lstat = function(x){as.numeric(ergm::summary_formula(x ~ altkstar(log(10), fixed = TRUE)))}, mirror = TRUE, type = c(&quot;Bianconi&quot;, &quot;Liebenau&quot;), ergm = TRUE)
 
 parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>g_tidy &lt;- StartNetwork::tidy_g(g)
 
 ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
   ggplot2::geom_vline(mapping = aes(xintercept = theta_s))</code></pre>
-<p><img src="alternating-kstars_files/figure-html/gwdegrees1-plot-1.png" width="672" /></p>
+<p><img src="snijders_files/figure-html/gwdegrees1-plot-1.png" width="672" /></p>
 </div>
-<div id="gwdegrees-2" class="section level2">
-<h2>gwdegrees 2</h2>
+<div id="altkstar-2" class="section level2">
+<h2>altkstar 2</h2>
 <pre class="r"><code>theta_s &lt;- 0.4
 theta_p &lt;- rep(seq(0.2, 0.6, by = 0.1), datapoints)
 
 cl &lt;- parallel::makeCluster(parallel::detectCores())
 
-g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gwdegree, lstat = function(x){as.numeric(ergm::summary_formula(x ~ gwdegree(10, fixed = TRUE)))}, mirror = TRUE, type = c(&quot;Bianconi&quot;, &quot;Liebenau&quot;), ergm = TRUE)
+g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gwdegree, lstat = function(x){as.numeric(ergm::summary_formula(x ~ altkstar(log(10), fixed = TRUE)))}, mirror = TRUE, type = c(&quot;Bianconi&quot;, &quot;Liebenau&quot;), ergm = TRUE)
 
 parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>g_tidy &lt;- StartNetwork::tidy_g(g)
 
 ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
   ggplot2::geom_vline(mapping = aes(xintercept = theta_s))</code></pre>
-<p><img src="alternating-kstars_files/figure-html/gwdegrees2-plot-1.png" width="672" /></p>
+<p><img src="snijders_files/figure-html/gwdegrees2-plot-1.png" width="672" /></p>
 </div>
-<div id="gwdegrees-3" class="section level2">
-<h2>gwdegrees 3</h2>
+<div id="altkstar-3" class="section level2">
+<h2>altkstar 3</h2>
 <pre class="r"><code>theta_s &lt;- 0.3
 theta_p &lt;- rep(seq(0.1, 0.5, by = 0.1), datapoints)
 
 cl &lt;- parallel::makeCluster(parallel::detectCores())
 
-g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gwdegree, lstat = function(x){as.numeric(ergm::summary_formula(x ~ gwdegree(10, fixed = TRUE)))}, mirror = TRUE, type = c(&quot;Bianconi&quot;, &quot;Liebenau&quot;), ergm = TRUE)
+g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gwdegree, lstat = function(x){as.numeric(ergm::summary_formula(x ~ altkstar(log(10), fixed = TRUE)))}, mirror = TRUE, type = c(&quot;Bianconi&quot;, &quot;Liebenau&quot;), ergm = TRUE)
 
 parallel::stopCluster(cl)</code></pre>
 <pre class="r"><code>g_tidy &lt;- StartNetwork::tidy_g(g)
 
 ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
   ggplot2::geom_vline(mapping = aes(xintercept = theta_s))</code></pre>
-<p><img src="alternating-kstars_files/figure-html/gwdegrees3-plot-1.png" width="672" /></p>
+<p><img src="snijders_files/figure-html/gwdegrees3-plot-1.png" width="672" /></p>
 </div>
 
 

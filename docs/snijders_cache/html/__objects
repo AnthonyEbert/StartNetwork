@@ -1,0 +1,7 @@
+libraries	datapoints	mech_net_gwdegree	n	replicates	.Random.seed
+gwdegrees1	cl	g	theta_p	theta_s
+gwdegrees1-plot	g_tidy
+gwdegrees2	cl	g	theta_p	theta_s
+gwdegrees2-plot	g_tidy
+gwdegrees3	cl	g	theta_p	theta_s
+gwdegrees3-plot	g_tidy
