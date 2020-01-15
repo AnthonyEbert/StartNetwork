@@ -2,10 +2,19 @@
 % Please edit documentation in R/KL_net.R
 \name{net_ss}
 \alias{net_ss}
+\alias{process_ss}
+\alias{KL_ss}
+\alias{KL_net}
 \title{Generates list of degree sequences and summary statistics for a mechanistic model}
 \usage{
 net_ss(theta_m, replicates = 1000, sorted = TRUE, mech_net, lstat,
   lapply_opt = TRUE, ergm = FALSE)
+
+process_ss(g, theta_s, mirror, type = "Bianconi")
+
+KL_ss(theta_m, theta_s, mirror = TRUE, type = "Bianconi", ...)
+
+KL_net(theta_m, ...)
 }
 \arguments{
 \item{theta_m}{numeric mechanistic model parameters}
@@ -19,27 +28,36 @@ net_ss(theta_m, replicates = 1000, sorted = TRUE, mech_net, lstat,
 \item{lstat}{function computes the likelihood statistic}
 
 \item{lapply_opt}{boolean internal}
+
+\item{g}{output of `net_ss`}
+
+\item{theta_s}{statistical parameter}
+
+\item{mirror}{Boolean. whether base measure should be mirrored}
+
+\item{type}{String: either "Liebenau" or "Bianconi"}
 }
 \description{
 Generates list of degree sequences and summary statistics for a mechanistic model
 }
 \examples{
 
-theta_m = 5
-theta_s = 1
+library(StartNetwork)
 n = 15
+replicates = 400
 
-mech_net = function(m, n, args){args$m = m; args$n = n; do.call(igraph::sample_pa, args)}
-mech_args = list(directed = FALSE)
-lstat = function(x){sum(igraph::degree(x) == 6)}
+mech_net_triangles <- purrr::partial(mech_net_triangles_n, n = !!n)
+lstat = function(x){length(igraph::triangles(x))/3}
 
-KL_net(
-  theta_m = theta_m,
-  theta_s = theta_s,
-  n = n,
-  mech_net = mech_net,
-  mech_args = mech_args,
-  lstat = lstat
+x = net_ss(
+ theta_m = 0.3,
+ replicates = 50,
+ mech_net = mech_net_triangles,
+ lstat = lstat
 )
+
+y = process_ss(x, 0.5, mirror = TRUE)
+
+reprocess_ss(y, 0.6)
 
 }

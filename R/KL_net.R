@@ -1,7 +1,6 @@
 
-# net_ss <- function(theta_m, n = 10, theta_s = 3, replicates = 1000, sorted = TRUE, mech_net, mech_args, lstat, lapply_opt = TRUE, ds_return = FALSE, pmf = NULL, mirror = TRUE){
-
 #' Generates list of degree sequences and summary statistics for a mechanistic model
+#' @rdname KL_net
 #' @param theta_m numeric mechanistic model parameters
 #' @param replicates numeric number of replicates
 #' @param sorted logical whether to consider the sorted or unsorted degree sequence as the integral statistic
@@ -11,22 +10,23 @@
 #' @importFrom magrittr %>%
 #' @examples
 #'
-#' theta_m = 5
-#' theta_s = 1
+#' library(StartNetwork)
 #' n = 15
+#' replicates = 400
 #'
-#' mech_net = function(m, n, args){args$m = m; args$n = n; do.call(igraph::sample_pa, args)}
-#' mech_args = list(directed = FALSE)
-#' lstat = function(x){sum(igraph::degree(x) == 6)}
+#' mech_net_triangles <- purrr::partial(mech_net_triangles_n, n = !!n)
+#' lstat = function(x){length(igraph::triangles(x))/3}
 #'
-#' KL_net(
-#'   theta_m = theta_m,
-#'   theta_s = theta_s,
-#'   n = n,
-#'   mech_net = mech_net,
-#'   mech_args = mech_args,
-#'   lstat = lstat
+#' x = net_ss(
+#'  theta_m = 0.3,
+#'  replicates = 50,
+#'  mech_net = mech_net_triangles,
+#'  lstat = lstat
 #' )
+#'
+#' y = process_ss(x, 0.5, mirror = TRUE)
+#'
+#' reprocess_ss(y, 0.6)
 #'
 #' @export
 net_ss <- function(theta_m, replicates = 1000, sorted = TRUE, mech_net, lstat, lapply_opt = TRUE, ergm = FALSE){
@@ -65,6 +65,11 @@ net_ss <- function(theta_m, replicates = 1000, sorted = TRUE, mech_net, lstat, l
   return(g)
 }
 
+#' @rdname KL_net
+#' @param g output of `net_ss`
+#' @param theta_s statistical parameter
+#' @param mirror Boolean. whether base measure should be mirrored
+#' @param type String: either "Liebenau" or "Bianconi"
 #' @export
 process_ss <- function(g, theta_s, mirror, type = "Bianconi"){
   sorted = attr(g, "sorted")
@@ -87,12 +92,14 @@ process_ss <- function(g, theta_s, mirror, type = "Bianconi"){
 }
 
 #' @export
+#' @rdname KL_net
 KL_ss <- function(theta_m, theta_s, mirror = TRUE, type = "Bianconi", ...){
   net_ss(theta_m = theta_m, ...) %>%
     process_ss(theta_s = theta_s, mirror = mirror, type = type)
 }
 
 #' @export
+#' @rdname KL_net
 KL_net <- function(theta_m, ...){
   -sum(KL_ss(theta_m = theta_m, ...))
 }
