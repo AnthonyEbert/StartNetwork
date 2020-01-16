@@ -14,20 +14,7 @@ tidy_g <- function(g, tidy = TRUE){
 
   if(!tidy){return(g_df)}
 
-  g_tidy <- g_df %>%
-    tidyr::gather( , , -parameter) %>%
-    dplyr::mutate(
-      type = dplyr::case_when(
-        stringr::str_ends(key, "1") ~ "Bianconi",
-        stringr::str_ends(key, "2") ~ "Liebenau",
-        TRUE ~ "common"
-      ),
-      key = dplyr::case_when(
-        stringr::str_ends(key, "1") ~ substr(key, 1, 4),
-        stringr::str_ends(key, "2") ~ substr(key, 1, 4),
-        TRUE ~ key
-      )
-    )
+  g_tidy <- process_g(g_df, NULL)
 
   return(g_tidy)
 }

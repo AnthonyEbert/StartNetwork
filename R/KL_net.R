@@ -71,7 +71,7 @@ net_ss <- function(theta_m, replicates = 1000, sorted = TRUE, mech_net, lstat, l
 #' @param mirror Boolean. whether base measure should be mirrored
 #' @param type String: either "Liebenau" or "Bianconi"
 #' @export
-process_ss <- function(g, theta_s, mirror, type = "Bianconi"){
+process_ss <- function(g, theta_s, mirror, type = "Bianconi", entropy_ss = FALSE){
   sorted = attr(g, "sorted")
 
   ds <- lapply(g, function(x){x$degree})
@@ -80,6 +80,10 @@ process_ss <- function(g, theta_s, mirror, type = "Bianconi"){
 
   stopifnot(length(lik_sum_stats) == length(theta_s))
   logh <- rowMeans(aapply(ds, number_of_graphs_dd, sorted = sorted, mirror = mirror, type = type))
+
+  if(entropy_ss){
+    ds <- c(ds, lik_sum_stats)
+  }
 
   entropy <- entropy_calc(ds, hash = TRUE)
 
@@ -93,9 +97,9 @@ process_ss <- function(g, theta_s, mirror, type = "Bianconi"){
 
 #' @export
 #' @rdname KL_net
-KL_ss <- function(theta_m, theta_s, mirror = TRUE, type = "Bianconi", ...){
+KL_ss <- function(theta_m, theta_s, mirror = TRUE, type = "Bianconi", entropy_ss = FALSE, ...){
   net_ss(theta_m = theta_m, ...) %>%
-    process_ss(theta_s = theta_s, mirror = mirror, type = type)
+    process_ss(theta_s = theta_s, mirror = mirror, type = type, entropy_ss = entropy_ss)
 }
 
 #' @export

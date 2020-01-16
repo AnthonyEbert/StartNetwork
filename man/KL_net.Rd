@@ -10,9 +10,10 @@
 net_ss(theta_m, replicates = 1000, sorted = TRUE, mech_net, lstat,
   lapply_opt = TRUE, ergm = FALSE)
 
-process_ss(g, theta_s, mirror, type = "Bianconi")
+process_ss(g, theta_s, mirror, type = "Bianconi", entropy_ss = FALSE)
 
-KL_ss(theta_m, theta_s, mirror = TRUE, type = "Bianconi", ...)
+KL_ss(theta_m, theta_s, mirror = TRUE, type = "Bianconi",
+  entropy_ss = FALSE, ...)
 
 KL_net(theta_m, ...)
 }
