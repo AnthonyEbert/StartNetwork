@@ -82,7 +82,7 @@ process_ss <- function(g, theta_s, mirror, type = "Bianconi", entropy_ss = FALSE
   logh <- rowMeans(aapply(ds, number_of_graphs_dd, sorted = sorted, mirror = mirror, type = type))
 
   if(entropy_ss){
-    ds <- c(ds, lik_sum_stats)
+    ds <- mapply(function(x, y){c(x,y)}, x = ds, y = aapply(g, function(x){x$stat}), SIMPLIFY = FALSE)
   }
 
   entropy <- entropy_calc(ds, hash = TRUE)
