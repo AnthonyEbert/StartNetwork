@@ -11,7 +11,7 @@ datapoints = 10
 mech_net_altkstars <- purrr::partial(sim_ergm_altkstar, n = !!n)
 
 theta_s <- 0.5
-theta_p <- rep(seq(0.1, 1.5, by = 0.1), datapoints)
+theta_p <- rep(seq(0.1, 1.5, by = 0.025), datapoints)
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
@@ -21,6 +21,6 @@ parallel::stopCluster(cl)
 
 df <- StartNetwork::tidy_g(g, tidy = FALSE)
 
-saveRDS(df, "altkstars0.Rds")
+saveRDS(df, "altkstars1.Rds")
 
 sessionInfo()
