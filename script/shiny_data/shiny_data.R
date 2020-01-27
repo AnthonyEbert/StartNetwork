@@ -5,7 +5,7 @@ library(parallel)
 library(ggplot2)
 
 n = 12
-replicates = 400
+replicates = 2000
 datapoints = 10
 
 sim_ergm_cycle <- function(p, n, nsim = 1, ...){
@@ -15,8 +15,8 @@ sim_ergm_cycle <- function(p, n, nsim = 1, ...){
 
 mech_net_cycle <- purrr::partial(sim_ergm_cycle, n = !!n)
 
-theta_s <- 0.5
-theta_p <- rep(seq(-1.5, 1.0, by = 0.25), datapoints)
+theta_s <- 0
+theta_p <- rep(seq(-1.5, 0.5, by = 0.25), datapoints)
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
@@ -26,6 +26,6 @@ parallel::stopCluster(cl)
 
 df <- StartNetwork::tidy_g(g, tidy = FALSE)
 
-saveRDS(df, "cycle4_1.Rds")
+saveRDS(df, "cycle4_2.Rds")
 
 sessionInfo()
