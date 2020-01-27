@@ -8,20 +8,24 @@ n = 15
 replicates = 400
 datapoints = 10
 
-mech_net_gnp = purrr::partial(igraph::sample_gnp, n = !!n, ... = , directed = FALSE, loops = FALSE)
+sim_ergm_cycle <- function(p, n, nsim = 1, ...){
+  ergg <- ergm::simulate_formula(network::network(n, directed = FALSE) ~ cycle(4), coef = c(p), nsim = nsim, ...)
+  return(ergg)
+}
 
-true_value <- 0.5
-theta_s <- log(true_value/(1 - true_value))
-theta_p <- rep(seq(0.025, 0.975, by = 0.025), datapoints)
+mech_net_cycle <- purrr::partial(sim_ergm_cycle, n = !!n)
+
+theta_s <- 0.5
+theta_p <- rep(seq(-1.5, 1.5, by = 0.5), datapoints)
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_gnp , lstat = igraph::gsize, mirror = TRUE, type = c("Bianconi", "Liebenau"), ergm = FALSE)
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_cycle , lstat = function(x){as.numeric(ergm::summary_formula(x ~ cycle(4)))}, mirror = TRUE, type = c("Bianconi", "Liebenau"), ergm = TRUE)
 
 parallel::stopCluster(cl)
 
 df <- StartNetwork::tidy_g(g, tidy = FALSE)
 
-saveRDS(df, "edges0.Rds")
+saveRDS(df, "cycle4_0.Rds")
 
 sessionInfo()
