@@ -5,7 +5,7 @@ library(parallel)
 library(ggplot2)
 
 n = 12
-replicates = 2000
+replicates = 10000
 datapoints = 10
 
 sim_ergm_cycle <- function(p, n, nsim = 1, ...){
@@ -26,6 +26,6 @@ parallel::stopCluster(cl)
 
 df <- StartNetwork::tidy_g(g, tidy = FALSE)
 
-saveRDS(df, "cycle4_2.Rds")
+saveRDS(df, "cycle4_4.Rds")
 
 sessionInfo()
