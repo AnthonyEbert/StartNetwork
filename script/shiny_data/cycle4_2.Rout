@@ -47,7 +47,7 @@ Type 'q()' to quit R.
 > 
 > df <- StartNetwork::tidy_g(g, tidy = FALSE)
 > 
-> saveRDS(df, "cycle4_2.Rds")
+> saveRDS(df, "cycle4_3.Rds")
 > 
 > sessionInfo()
 R version 3.6.2 (2019-12-12)
