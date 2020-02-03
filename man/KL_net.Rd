@@ -7,13 +7,34 @@
 \alias{KL_net}
 \title{Generates list of degree sequences and summary statistics for a mechanistic model}
 \usage{
-net_ss(theta_m, replicates = 1000, sorted = TRUE, mech_net, lstat,
-  lapply_opt = TRUE, ergm = FALSE)
+net_ss(
+  theta_m,
+  replicates = 1000,
+  sorted = TRUE,
+  mech_net,
+  lstat,
+  lapply_opt = TRUE,
+  ergm = FALSE
+)
 
-process_ss(g, theta_s, mirror, type = "Bianconi", entropy_ss = FALSE)
+process_ss(
+  g,
+  theta_s,
+  mirror,
+  type = "Bianconi",
+  entropy_ss = FALSE,
+  degree_triangle = FALSE
+)
 
-KL_ss(theta_m, theta_s, mirror = TRUE, type = "Bianconi",
-  entropy_ss = FALSE, ...)
+KL_ss(
+  theta_m,
+  theta_s,
+  mirror = TRUE,
+  type = "Bianconi",
+  entropy_ss = FALSE,
+  degree_triangle = FALSE,
+  ...
+)
 
 KL_net(theta_m, ...)
 }

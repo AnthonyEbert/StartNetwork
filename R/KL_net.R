@@ -71,7 +71,7 @@ net_ss <- function(theta_m, replicates = 1000, sorted = TRUE, mech_net, lstat, l
 #' @param mirror Boolean. whether base measure should be mirrored
 #' @param type String: either "Liebenau" or "Bianconi"
 #' @export
-process_ss <- function(g, theta_s, mirror, type = "Bianconi", entropy_ss = FALSE){
+process_ss <- function(g, theta_s, mirror, type = "Bianconi", entropy_ss = FALSE, degree_triangle = FALSE){
   sorted = attr(g, "sorted")
 
   ds <- lapply(g, function(x){x$degree})
@@ -80,6 +80,12 @@ process_ss <- function(g, theta_s, mirror, type = "Bianconi", entropy_ss = FALSE
 
   stopifnot(length(lik_sum_stats) == length(theta_s))
   logh <- rowMeans(aapply(ds, number_of_graphs_dd, sorted = sorted, mirror = mirror, type = type))
+
+  if(degree_triangle){
+    triangle_dist <- mapply(triangle_dist_degseq, ds, aapply(g, function(x){x$stat}))
+    logT <- mean(log(triangle_dist + 1e-8))
+    logh <- logh + logT
+  }
 
   if(entropy_ss){
     ds <- mapply(function(x, y){c(x,y)}, x = ds, y = aapply(g, function(x){x$stat}), SIMPLIFY = FALSE)
@@ -91,15 +97,16 @@ process_ss <- function(g, theta_s, mirror, type = "Bianconi", entropy_ss = FALSE
 
   output <- c(entropy = entropy, logh = logh, log_lik = log_lik)
   attr(output, "lik_sum_stats") <- lik_sum_stats
+  #attr(output, "triangle_dist") <-  triangle_dist
 
   return(output)
 }
 
 #' @export
 #' @rdname KL_net
-KL_ss <- function(theta_m, theta_s, mirror = TRUE, type = "Bianconi", entropy_ss = FALSE, ...){
+KL_ss <- function(theta_m, theta_s, mirror = TRUE, type = "Bianconi", entropy_ss = FALSE, degree_triangle = FALSE, ...){
   net_ss(theta_m = theta_m, ...) %>%
-    process_ss(theta_s = theta_s, mirror = mirror, type = type, entropy_ss = entropy_ss)
+    process_ss(theta_s = theta_s, mirror = mirror, type = type, entropy_ss = entropy_ss, degree_triangle = degree_triangle)
 }
 
 #' @export
