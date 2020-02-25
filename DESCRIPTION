@@ -1,6 +1,6 @@
 Package: StartNetwork
 Title: Calculates KL divergence between mechanistic and statistical network models
-Version: 1.2.3
+Version: 1.3.0
 Authors@R: 
     person(given = "Anthony",
            family = "Ebert",
