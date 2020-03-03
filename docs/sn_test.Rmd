@@ -1,0 +1,46 @@
+---
+title: "New sampler"
+author: "Anthony Ebert"
+date: "25/02/2020"
+output: pdf_document
+---
+
+```{r, include=FALSE}
+set.seed(1)
+library(ergm)
+library(StartNetwork)
+```
+
+```{r test1, cache = TRUE, cache.rebuild=FALSE}
+ergm_test <- ergm::simulate_formula(network::network(20, directed = FALSE) ~ gwdegree(2, fixed = TRUE), coef = 3, output = "stats", nsim = 1000)
+
+x = mech_net_gwdegree_n(1, 20, 1)
+sn_init = sort(as.numeric(igraph::degree(x)))
+sn_test <- ergm_simulator(sn_init, gwdegree , 5000, 3, alpha = 2)
+
+plot(density(ergm_test), xlim = c(110, 140))
+lines(density(sn_test[-c(1:1000)]), col = "red")
+```
+
+```{r test2, cache = TRUE, cache.rebuild=FALSE}
+ergm_test <- ergm::simulate_formula(network::network(20, directed = FALSE) ~ gwdegree(2, fixed = TRUE), coef = -1, output = "stats", nsim = 1000)
+
+x = mech_net_gwdegree_n(1, 20, 1)
+sn_init = sort(as.numeric(igraph::degree(x)))
+sn_test <- ergm_simulator(sn_init, gwdegree , 10000, -1, alpha = 2)
+
+plot(density(ergm_test))
+lines(density(sn_test[-c(1:2000)]), col = "red")
+```
+
+```{r time}
+system.time(ergm::simulate_formula(network::network(20, directed = FALSE) ~ gwdegree(2, fixed = TRUE), coef = -1, output = "stats", nsim = 10000))
+system.time(ergm_simulator(sn_init, gwdegree , 10000, -1, alpha = 2))
+```
+
+
+
+
+
+
+
