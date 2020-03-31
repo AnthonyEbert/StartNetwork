@@ -12,3 +12,9 @@ triangles5	::	!	c	length	log	mech_net_triangles_n	rep	seq
 triangles5-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
 triangles6	::	!	c	length	log	mech_net_triangles_n	rep	seq
 triangles6-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
+triangles7	::	!	c	length	log	mech_net_triangles_n	rep	seq
+triangles7-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
+triangles8	::	!	c	length	log	mech_net_triangles_n	rep	seq
+triangles8-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value
+triangles9	::	!	c	length	log	mech_net_triangles_n	rep	seq
+triangles9-plot	::	~	aes	facet_wrap	g	geom_boxplot	ggplot	interaction	parameter	true_value	type	value

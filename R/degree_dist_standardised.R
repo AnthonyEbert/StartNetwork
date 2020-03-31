@@ -85,8 +85,11 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, mirror = FALSE, t
   }
 
   if(sorted){
-    size_factor <- arrangements::npermutations(k = length(x), freq = as.numeric(table(x)), bigz = bigz)
-    output <- output + gmp::log.bigz(size_factor)
+    table_x <- tabulate(x + 1)
+    output <- output + lfactorial(sum(table_x)) - sum(lfactorial(table_x))
+    #size_factor <- arrangements::npermutations(k = length(x), freq = table_x, bigz = bigz)
+    # size_factor <- arrangements::npermutations(k = length(x), freq = as.numeric(table(x)), bigz = bigz)
+    #output <- output + gmp::log.bigz(size_factor)
   }
 
 

@@ -22,7 +22,7 @@ altkstars_sn <- function(x, lambda){
 #' @export
 gwdegree <- function(x, alpha){
   n <- max(x)
-  dstat <- as.numeric(table(factor(x, levels = 0:I(n- 1))))
+  dstat <- tabulate(x + 1)
 
   output <- 0
 

@@ -22,7 +22,7 @@ library(parallel)
 library(ggplot2)
 
 n = 15
-replicates = 400
+replicates = 200
 ```
 
 ## Triangles 1
@@ -31,7 +31,7 @@ replicates = 400
 mech_net_triangles <- purrr::partial(mech_net_triangles_n, n = !!n)
 
 true_value <- 0.5
-theta_p <- rep(seq(0.4, 0.6, by = 0.02), 5)
+theta_p <- rep(seq(0.05, 0.95, by = 0.05), 5)
 theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
@@ -165,6 +165,85 @@ parallel::stopCluster(cl)
 ```
 
 ```{r triangles6-plot}
+g_tidy <- StartNetwork::tidy_g(g)
+
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
+```
+
+## Triangles 7
+
+```{r triangles7}
+n = 15
+replicates = 800
+
+mech_net_triangles <- purrr::partial(mech_net_triangles_n, n = !!n)
+
+true_value <- 0.325
+theta_p <- rep(seq(0.1, 0.5, by = 0.025), 5)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE, type = c("Bianconi", "Liebenau"))
+
+parallel::stopCluster(cl)
+```
+
+```{r triangles7-plot}
+g_tidy <- StartNetwork::tidy_g(g)
+
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
+```
+
+## Triangles 8
+
+```{r triangles8}
+n = 15
+replicates = 800
+
+mech_net_triangles <- purrr::partial(mech_net_triangles_n, n = !!n)
+
+true_value <- 0.35
+theta_p <- rep(seq(0.1, 0.5, by = 0.025), 5)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE, type = c("Bianconi", "Liebenau"))
+
+parallel::stopCluster(cl)
+```
+
+```{r triangles8-plot}
+g_tidy <- StartNetwork::tidy_g(g)
+
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))
+```
+
+
+## Triangles 9
+
+```{r triangles9}
+n = 15
+replicates = 800
+
+mech_net_triangles <- purrr::partial(mech_net_triangles_n, n = !!n)
+
+true_value <- 0.375
+theta_p <- rep(seq(0.1, 0.5, by = 0.025), 5)
+theta_s <- log(true_value/(1 - true_value))
+
+cl <- parallel::makeCluster(parallel::detectCores())
+
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE, type = c("Bianconi", "Liebenau"))
+
+parallel::stopCluster(cl)
+```
+
+```{r triangles9-plot}
 g_tidy <- StartNetwork::tidy_g(g)
 
 ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = "identity") + facet_wrap( ~ key, scales = "free_y") + 

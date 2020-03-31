@@ -16,12 +16,12 @@ theta_s <- log(true_value/(1 - true_value))
 
 cl <- parallel::makeCluster(parallel::detectCores())
 
-g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE, type = c("Bianconi", "Liebenau"), degree_triangle = TRUE, entropy_ss = TRUE)
+g <- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE, type = c("Bianconi", "Liebenau"), degree_triangle = FALSE, entropy_ss = FALSE)
 
 parallel::stopCluster(cl)
 
 df <- StartNetwork::tidy_g(g, tidy = FALSE)
 
-saveRDS(df, "triangle7.Rds")
+saveRDS(df, "triangle8.Rds")
 
 sessionInfo()

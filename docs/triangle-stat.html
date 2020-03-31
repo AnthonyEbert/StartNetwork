@@ -204,6 +204,9 @@ summary {
 <li><a href="#triangles-4">Triangles 4</a></li>
 <li><a href="#triangles-5">Triangles 5</a></li>
 <li><a href="#triangles-6">Triangles 6</a></li>
+<li><a href="#triangles-7">Triangles 7</a></li>
+<li><a href="#triangles-8">Triangles 8</a></li>
+<li><a href="#triangles-9">Triangles 9</a></li>
 </ul>
 </div>
 
@@ -336,6 +339,72 @@ parallel::stopCluster(cl)</code></pre>
 ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
   ggplot2::geom_vline(mapping = aes(xintercept = true_value))</code></pre>
 <p><img src="triangle-stat_files/figure-html/triangles6-plot-1.png" width="672" /></p>
+</div>
+<div id="triangles-7" class="section level2">
+<h2>Triangles 7</h2>
+<pre class="r"><code>n = 15
+replicates = 800
+
+mech_net_triangles &lt;- purrr::partial(mech_net_triangles_n, n = !!n)
+
+true_value &lt;- 0.325
+theta_p &lt;- rep(seq(0.1, 0.5, by = 0.025), 5)
+theta_s &lt;- log(true_value/(1 - true_value))
+
+cl &lt;- parallel::makeCluster(parallel::detectCores())
+
+g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE, type = c(&quot;Bianconi&quot;, &quot;Liebenau&quot;))
+
+parallel::stopCluster(cl)</code></pre>
+<pre class="r"><code>g_tidy &lt;- StartNetwork::tidy_g(g)
+
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))</code></pre>
+<p><img src="triangle-stat_files/figure-html/triangles7-plot-1.png" width="672" /></p>
+</div>
+<div id="triangles-8" class="section level2">
+<h2>Triangles 8</h2>
+<pre class="r"><code>n = 15
+replicates = 800
+
+mech_net_triangles &lt;- purrr::partial(mech_net_triangles_n, n = !!n)
+
+true_value &lt;- 0.35
+theta_p &lt;- rep(seq(0.1, 0.5, by = 0.025), 5)
+theta_s &lt;- log(true_value/(1 - true_value))
+
+cl &lt;- parallel::makeCluster(parallel::detectCores())
+
+g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE, type = c(&quot;Bianconi&quot;, &quot;Liebenau&quot;))
+
+parallel::stopCluster(cl)</code></pre>
+<pre class="r"><code>g_tidy &lt;- StartNetwork::tidy_g(g)
+
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))</code></pre>
+<p><img src="triangle-stat_files/figure-html/triangles8-plot-1.png" width="672" /></p>
+</div>
+<div id="triangles-9" class="section level2">
+<h2>Triangles 9</h2>
+<pre class="r"><code>n = 15
+replicates = 800
+
+mech_net_triangles &lt;- purrr::partial(mech_net_triangles_n, n = !!n)
+
+true_value &lt;- 0.375
+theta_p &lt;- rep(seq(0.1, 0.5, by = 0.025), 5)
+theta_s &lt;- log(true_value/(1 - true_value))
+
+cl &lt;- parallel::makeCluster(parallel::detectCores())
+
+g &lt;- parallel::parLapply(cl, theta_p, StartNetwork::KL_ss, theta_s = theta_s, replicates = replicates, sorted = TRUE, mech_net = mech_net_triangles, lstat = function(x){length(igraph::triangles(x))/3}, mirror = TRUE, type = c(&quot;Bianconi&quot;, &quot;Liebenau&quot;))
+
+parallel::stopCluster(cl)</code></pre>
+<pre class="r"><code>g_tidy &lt;- StartNetwork::tidy_g(g)
+
+ggplot(g_tidy) + aes(x = parameter, y = value, group = interaction(parameter, type), col = type) + geom_boxplot(outlier.shape = NULL, position = &quot;identity&quot;) + facet_wrap( ~ key, scales = &quot;free_y&quot;) + 
+  ggplot2::geom_vline(mapping = aes(xintercept = true_value))</code></pre>
+<p><img src="triangle-stat_files/figure-html/triangles9-plot-1.png" width="672" /></p>
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>## R version 3.6.1 (2019-07-05)
 ## Platform: x86_64-pc-linux-gnu (64-bit)

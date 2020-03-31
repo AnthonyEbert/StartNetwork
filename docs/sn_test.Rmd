@@ -14,7 +14,7 @@ library(StartNetwork)
 ```{r test1, cache = TRUE, cache.rebuild=FALSE}
 ergm_test <- ergm::simulate_formula(network::network(20, directed = FALSE) ~ gwdegree(2, fixed = TRUE), coef = 3, output = "stats", nsim = 1000)
 
-x = mech_net_gwdegree_n(1, 20, 1)
+x = mech_net_gwdegree_n(1, 60, 1)
 sn_init = sort(as.numeric(igraph::degree(x)))
 sn_test <- ergm_simulator(sn_init, gwdegree , 5000, 3, alpha = 2)
 
