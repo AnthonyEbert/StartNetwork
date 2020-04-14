@@ -9,28 +9,50 @@ output: pdf_document
 set.seed(1)
 library(ergm)
 library(StartNetwork)
+library(parallel)
+cl <- parallel::makeCluster(parallel::detectCores())
+
+n = 40
+nsim = 1000
+nsim_new = 5000
 ```
 
-```{r test1, cache = TRUE, cache.rebuild=FALSE}
-ergm_test <- ergm::simulate_formula(network::network(20, directed = FALSE) ~ gwdegree(2, fixed = TRUE), coef = 3, output = "stats", nsim = 1000)
+```{r test1}
+ergm_test <- ergm::simulate_formula(network::network(n, directed = FALSE) ~ gwdegree(2, fixed = TRUE), coef = 3, nsim = nsim)
 
-x = mech_net_gwdegree_n(1, 20, 1)
+ergm_test <- summary(ergm_test ~ gwdegree(2, fixed = TRUE))
+
+x = mech_net_gwdegree_n(1, n, 1)
 sn_init = sort(as.numeric(igraph::degree(x)))
-sn_test <- ergm_simulator(sn_init, gwdegree , 5000, 3, alpha = 2)
 
-plot(density(ergm_test), xlim = c(110, 140))
+input <- plyr::alply(t(replicate(6,sn_init)), 1)
+sn_test <- parallel::parLapply(cl, input, ergm_simulator, sum_stat = StartNetwork::gwdegree, loops = nsim_new, theta = 3, alpha = 2)
+
+# sn_test <- ergm_simulator(sn_init, Sgwdegree , 5000, 3, alpha = 2)
+
+sn_test <- unlist(sn_test)
+
+plot(density(ergm_test))
 lines(density(sn_test[-c(1:1000)]), col = "red")
 ```
 
-```{r test2, cache = TRUE, cache.rebuild=FALSE}
-ergm_test <- ergm::simulate_formula(network::network(20, directed = FALSE) ~ gwdegree(2, fixed = TRUE), coef = -1, output = "stats", nsim = 1000)
+```{r test2}
+ergm_test <- ergm::simulate_formula(network::network(n, directed = FALSE) ~ gwdegree(2, fixed = TRUE), coef = -1, nsim = nsim)
 
-x = mech_net_gwdegree_n(1, 20, 1)
+ergm_test <- summary(ergm_test ~ gwdegree(2, fixed = TRUE))
+
+x = mech_net_gwdegree_n(1, n, 1)
 sn_init = sort(as.numeric(igraph::degree(x)))
-sn_test <- ergm_simulator(sn_init, gwdegree , 10000, -1, alpha = 2)
+
+input <- plyr::alply(t(replicate(6,sn_init)), 1)
+sn_test <- parallel::parLapply(cl, input, ergm_simulator, sum_stat = StartNetwork::gwdegree, loops = nsim_new, theta = -1, alpha = 2)
+
+# sn_test <- ergm_simulator(sn_init, Sgwdegree , 5000, 3, alpha = 2)
+
+sn_test <- unlist(sn_test)
 
 plot(density(ergm_test))
-lines(density(sn_test[-c(1:2000)]), col = "red")
+lines(density(sn_test[-c(1:1000)]), col = "red")
 ```
 
 ```{r time}

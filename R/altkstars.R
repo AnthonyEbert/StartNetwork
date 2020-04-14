@@ -21,13 +21,17 @@ altkstars_sn <- function(x, lambda){
 
 #' @export
 gwdegree <- function(x, alpha){
-  n <- max(x)
+  n <- length(x)
   dstat <- as.numeric(table(factor(x, levels = 0:I(n- 1))))
 
   output <- 0
 
+  # for(i in 1:I(n-1)){
+  #   output <- output + ((1 - exp(-alpha))^i - 1 + i*exp(-alpha)) * dstat[i+1]
+  # }
+
   for(i in 1:I(n-1)){
-    output <- output + (1 - (1 - exp(-alpha))^i) * dstat[i]
+    output <- output + (1 - (1 - exp(-alpha))^i) * dstat[i+1]
   }
 
   output <- output * exp(alpha)

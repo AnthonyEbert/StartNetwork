@@ -14,7 +14,7 @@ ergm_simulator <- function(init, sum_stat, loops, theta, ...){
     x_star <- qERGM(x)
     s_star <- sum_stat(x_star, ...)
 
-    acceptance_prob <- number_of_graphs_dd(x_star, mirror = TRUE) - number_of_graphs_dd(x, mirror = TRUE) + s_star %*% theta - s_init %*% theta
+    acceptance_prob <- number_of_graphs_dd(x_star, type = "Liebenau") - number_of_graphs_dd(x, type = "Liebenau") + s_star %*% theta - s_init %*% theta
     if(rbinom(1, size = 1, prob = min(1,exp(acceptance_prob))) == 1){
       x = x_star
       s_init = s_star
