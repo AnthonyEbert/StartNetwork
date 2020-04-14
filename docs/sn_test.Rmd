@@ -6,58 +6,67 @@ output: pdf_document
 ---
 
 ```{r, include=FALSE}
-set.seed(1)
 library(ergm)
 library(StartNetwork)
 library(parallel)
-cl <- parallel::makeCluster(parallel::detectCores())
+nc <- parallel::detectCores()
+cl <- parallel::makeCluster(nc)
+clusterSetRNGStream(cl, 2)
 
-n = 40
+n = 4
 nsim = 1000
-nsim_new = 5000
+nsim_new = 10000
+
+degseq_extract <- function(x){
+  sort.int(as.numeric(igraph::degree(StartNetwork::ergm_to_igraph(x))))
+}
+
+coef_up = 0.1
+coef_low = -0.1
+
 ```
 
 ```{r test1}
-ergm_test <- ergm::simulate_formula(network::network(n, directed = FALSE) ~ gwdegree(2, fixed = TRUE), coef = 3, nsim = nsim)
+ergm_test0 <- ergm::simulate_formula(network::network(n, directed = FALSE) ~ gwdegree(2, fixed = TRUE), coef = coef_up, nsim = nsim)
 
-ergm_test <- summary(ergm_test ~ gwdegree(2, fixed = TRUE))
+ergm_test <- summary(ergm_test0 ~ gwdegree(2, fixed = TRUE))
+#ergm_test <- as.numeric(ergm_test0)
 
-x = mech_net_gwdegree_n(1, n, 1)
-sn_init = sort(as.numeric(igraph::degree(x)))
-
-input <- plyr::alply(t(replicate(6,sn_init)), 1)
-sn_test <- parallel::parLapply(cl, input, ergm_simulator, sum_stat = StartNetwork::gwdegree, loops = nsim_new, theta = 3, alpha = 2)
+input = lapply(ergm_test0[1:nc], degseq_extract)
+sn_test0 <- parallel::parSapply(cl, input, ergm_simulator, sum_stat = StartNetwork::gwdegree, loops = nsim_new, theta = coef_up, alpha = 2, simplify = TRUE, type = "Exact")
 
 # sn_test <- ergm_simulator(sn_init, Sgwdegree , 5000, 3, alpha = 2)
 
-sn_test <- unlist(sn_test)
+sn_test <- as.numeric(sn_test0)[-c(1:length(nsim_new/10))]
+len_x <- length(sn_test)
 
-plot(density(ergm_test))
-lines(density(sn_test[-c(1:1000)]), col = "red")
+hist(ergm_test, breaks = 0:20, freq = FALSE)
+hist(sn_test[seq(1, len_x, by = 10)], breaks = 0:20, col = "red", add = TRUE, freq = FALSE)
+
+# plot(density(ergm_test))
+# lines(density(sn_test[seq(1, len_x, by = 10)]), col = "red")
 ```
 
 ```{r test2}
-ergm_test <- ergm::simulate_formula(network::network(n, directed = FALSE) ~ gwdegree(2, fixed = TRUE), coef = -1, nsim = nsim)
+ergm_test <- ergm::simulate_formula(network::network(n, directed = FALSE) ~ gwdegree(2, fixed = TRUE), coef = coef_low, nsim = nsim)
 
 ergm_test <- summary(ergm_test ~ gwdegree(2, fixed = TRUE))
 
 x = mech_net_gwdegree_n(1, n, 1)
-sn_init = sort(as.numeric(igraph::degree(x)))
 
-input <- plyr::alply(t(replicate(6,sn_init)), 1)
-sn_test <- parallel::parLapply(cl, input, ergm_simulator, sum_stat = StartNetwork::gwdegree, loops = nsim_new, theta = -1, alpha = 2)
+input = lapply(ergm_test0[1:nc], degseq_extract)
+sn_test <- parallel::parLapply(cl, input, ergm_simulator, sum_stat = StartNetwork::gwdegree, loops = nsim_new, theta = coef_up, alpha = 2, simplify = TRUE, type = "Exact")
 
 # sn_test <- ergm_simulator(sn_init, Sgwdegree , 5000, 3, alpha = 2)
 
 sn_test <- unlist(sn_test)
 
 plot(density(ergm_test))
-lines(density(sn_test[-c(1:1000)]), col = "red")
+lines(density(sn_test[-c(1:I(nsim_new/10))]), col = "red")
 ```
 
 ```{r time}
-system.time(ergm::simulate_formula(network::network(20, directed = FALSE) ~ gwdegree(2, fixed = TRUE), coef = -1, output = "stats", nsim = 10000))
-system.time(ergm_simulator(sn_init, gwdegree , 10000, -1, alpha = 2))
+parallel::stopCluster(cl)
 ```
 
 
