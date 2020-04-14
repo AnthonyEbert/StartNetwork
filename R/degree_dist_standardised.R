@@ -52,7 +52,7 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, mirror = FALSE, t
   }
 
   if(all(x == 0)){
-    return(rep(0, length(type)))
+    return(rep(-Inf, length(type)))
   }
 
   M <- sum(x)
@@ -82,6 +82,15 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, mirror = FALSE, t
     mud = mean(x)/(n - 1)
     output2 <- 0.5 * log(2) + 1/4 - gamma2^2 / (4 * mud^2 * (1 - mud)^2) + (n * (n - 1)/2) *( mud * log(mud) + (1 - mud)*log(1 - mud)) + sum(lchoose(n - 1, x))
     output <- c(output, output2)
+  }
+
+  if("Exact" %in% type){
+    stopifnot(length(x) == 4)
+    sort_x <- sort(x)
+    output <- StartNetwork::vertex4 %>% dplyr::filter(digest == digest::digest(sort_x)) %>% dplyr::pull(combinations)
+    sorted <- FALSE
+    if(length(output) == 0){output = 0}
+    output <- log(output)
   }
 
   if(sorted){

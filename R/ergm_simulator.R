@@ -31,16 +31,20 @@ ergm_simulator <- function(init, sum_stat, loops, theta, type = "Liebenau", ...)
 qERGM <- function(x){
   n <- length(x)
   ind <- sample.int(n, 2)
+  alt01 <- sample.int(3, 1, prob = c(1/3, 1/3, 1/3))
 
-  if(rbinom(1, 1, 0.5) == 1){
+  if(alt01 == 1){
     x[ind[1]] = x[ind[1]] + 1
     x[ind[2]] = x[ind[2]] + 1
-  } else {
+  } else if(alt01 == 2){
     x[ind[1]] = x[ind[1]] - 1
     x[ind[2]] = x[ind[2]] - 1
+  } else {
+    x[ind[1]] = x[ind[1]] - 1
+    x[ind[2]] = x[ind[2]] + 1
   }
 
-  if(rbinom(1, 1, 0.2) == 1){
+  if(rbinom(1, 1, 0.4) == 1){
     x = qERGM(x)
   }
 
