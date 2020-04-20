@@ -2,43 +2,87 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// cloteaux2018sufficient A sufficient condition for graphic sequences with given largest and smallest entries, length and sum
+
 // [[Rcpp::export]]
-bool graphExists(std::vector<int> a)
-{
+bool cloteaux(arma::ivec a, bool sorted){
+  if(!sorted){
+    a = sort(a, "descend");
+  }
   int n = a.size();
-  // Keep performing the operations until one
-  // of the stopping condition is met
-  while (1)
-  {
-    // Sort the list in non-decreasing order
-    sort(a.begin(), a.end());
-    reverse(a.begin(), a.end());
+  int zero_loc = n;
+  int i = 0;
 
-    // Check if all the elements are equal to 0
-    if (a[0] == 0 and a[a.size() - 1] == 0)
-      return true;
+  if(a[n-1] < 0){
+    return false;
+  }
 
-    // Store the first element in a variable
-    // and delete it from the list
-    int v = a[0];
-    a.erase(a.begin() + 0);
+  if(a[0] == 0){
+    return true;
+  }
 
-    // Check if enough elements
-    // are present in the list
-    if (v > a.size())
-      return false;
+  bool condition = true;
 
-    // Subtract first element from next v elements
-    for (int i = 0; i < v; i++)
-    {
-      a[i]--;
-
-      // Check if negative element is
-      // encountered after subtraction
-      if (a[i] < 0)
-        return false;
+  while(i < n && condition){
+    i = i + 1;
+    if(a[i] == 0){
+      zero_loc = i;
+      condition = false;
     }
   }
+
+  zero_loc += -1;
+  arma::ivec b = a.subvec(0, zero_loc);
+
+  n = b.size();
+
+  int a1 = b[0];
+  int an = b[n-1];
+  int s = arma::sum(b);
+
+  if(an < 0){
+    return false;
+  }
+
+  if(a1 > n - 1){
+    return false;
+  }
+
+  if(s == 0){
+    return true;
+  }
+
+  if(a1 == an){
+    return true;
+  }
+
+  double summand = (a1 - an) * ((n - a1 - 1) / (n*a1 - s) + (an) / (s - n * an));
+
+  // Rcpp::Rcout << "summand";
+
+  if(summand >= 1){
+    return true;
+  }
+
+  // Rcpp::Rcout << "summand_check";
+
+  int lhs;
+  int rhs;
+  arma::ivec bsubvec;
+
+  for(int r = 0; r < n; ++r){
+    bsubvec = b.subvec(0,r);
+    lhs = arma::sum(bsubvec);
+    rhs = (r+1)*(r);
+    for(int i = r; i < n; ++i){
+      rhs += std::min(r+1, b[i]);
+    }
+    if(lhs > rhs){
+      return false;
+    }
+  }
+
+  return true;
 }
 
 
@@ -48,20 +92,27 @@ double number_of_graphs_cpp(
     bool sorted
 ) {
 
-  // typedef std::vector<int> stdvec;
-  // stdvec z = arma::conv_to< stdvec >::from(input);
-  // bool graphical = graphExists(z);
-  //
-  // if(!graphical){
-  //   return -999999999999999999;
-  // }
+  arma::ivec input_sorted = sort(input, "descend");
+  int n = input_sorted.size();
+  if(input_sorted[0] == 0){
+    if(input_sorted[n-1] == 0){
+      return 0;
+    }
+  }
+
+  bool graphical = cloteaux(input_sorted, true);
+
+  double negative_infinity = -arma::datum::inf;
+
+  if(!graphical){
+    return negative_infinity;
+  }
 
 
   arma::vec x = arma::conv_to<arma::vec>::from(input);
 
   Rcpp::List output_obj;
 
-  int n = x.size();
   Rcpp::NumericVector y = Rcpp::wrap(x);
   double gamma2 = std::pow(arma::stddev(x),2) / (n - 1);
   double mud = arma::mean(x) / (n - 1);
@@ -89,7 +140,7 @@ double sum_sim(
   ) {
   //arma::vec inputv = arma::conv_to<arma::vec>::from(input);
   double output = arma::sum(input);
-  return output;
+  return output / 2;
 }
 
 // [[Rcpp::export]]
@@ -102,21 +153,21 @@ arma::ivec proposal_sim(
   arma::uvec positions = arma::randperm(input_len);
   int position0 = positions[0];
   int position1 = positions[1];
-  arma::ivec output = input;
+
 
   if (flip == 0){
-    output[position0] = output[position0] + 1;
-    output[position1] = output[position1] + 1;
+    input[position0] += 1;
+    input[position1] += 1;
   } else {
-    output[position0] = output[position0] - 1;
-    output[position1] = output[position1] - 1;
+    input[position0] += - 1;
+    input[position1] += - 1;
   }
 
-  return output;
+  return input;
 }
 
 // [[Rcpp::export]]
-arma::ivec ergm_simulator_cpp(
+Rcpp::List ergm_simulator_cpp(
     arma::ivec init,
     int loops,
     double theta
@@ -132,7 +183,7 @@ arma::ivec ergm_simulator_cpp(
   arma::ivec x;
   x = init;
 
-  //arma::imat accepted(x.size(), loops);
+  arma::imat accepted_mat(x.size(), loops);
   arma::ivec accepted(loops);
 
   double s_init;
@@ -162,21 +213,16 @@ arma::ivec ergm_simulator_cpp(
       x = x_star;
       s_init = s_star;
     }
+
+    accepted_mat.col(i) = x;
     accepted(i) = s_init;
   }
 
-  //Rcpp::List output_obj;
-  //output_obj["accepted"] = accepted;
+  Rcpp::List output_obj;
+  output_obj["degree_sequences"] = accepted_mat;
+  output_obj["stats"] = accepted;
 
-  return accepted;
+  return output_obj;
 }
-
-
-// C++ implementation of the approach
-
-
-// Function that returns true if
-// a simple graph exists
-
 
 

@@ -6,14 +6,15 @@
 
 using namespace Rcpp;
 
-// graphExists
-bool graphExists(std::vector<int> a);
-RcppExport SEXP _StartNetwork_graphExists(SEXP aSEXP) {
+// cloteaux
+bool cloteaux(arma::ivec a, bool sorted);
+RcppExport SEXP _StartNetwork_cloteaux(SEXP aSEXP, SEXP sortedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<int> >::type a(aSEXP);
-    rcpp_result_gen = Rcpp::wrap(graphExists(a));
+    Rcpp::traits::input_parameter< arma::ivec >::type a(aSEXP);
+    Rcpp::traits::input_parameter< bool >::type sorted(sortedSEXP);
+    rcpp_result_gen = Rcpp::wrap(cloteaux(a, sorted));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -52,7 +53,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // ergm_simulator_cpp
-arma::ivec ergm_simulator_cpp(arma::ivec init, int loops, double theta);
+Rcpp::List ergm_simulator_cpp(arma::ivec init, int loops, double theta);
 RcppExport SEXP _StartNetwork_ergm_simulator_cpp(SEXP initSEXP, SEXP loopsSEXP, SEXP thetaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -64,13 +65,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// graphExists
+bool graphExists(std::vector<int> a);
+RcppExport SEXP _StartNetwork_graphExists(SEXP aSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<int> >::type a(aSEXP);
+    rcpp_result_gen = Rcpp::wrap(graphExists(a));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_StartNetwork_graphExists", (DL_FUNC) &_StartNetwork_graphExists, 1},
+    {"_StartNetwork_cloteaux", (DL_FUNC) &_StartNetwork_cloteaux, 2},
     {"_StartNetwork_number_of_graphs_cpp", (DL_FUNC) &_StartNetwork_number_of_graphs_cpp, 2},
     {"_StartNetwork_sum_sim", (DL_FUNC) &_StartNetwork_sum_sim, 1},
     {"_StartNetwork_proposal_sim", (DL_FUNC) &_StartNetwork_proposal_sim, 1},
     {"_StartNetwork_ergm_simulator_cpp", (DL_FUNC) &_StartNetwork_ergm_simulator_cpp, 3},
+    {"_StartNetwork_graphExists", (DL_FUNC) &_StartNetwork_graphExists, 1},
     {NULL, NULL, 0}
 };
 
