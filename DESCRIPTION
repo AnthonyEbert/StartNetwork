@@ -18,4 +18,8 @@ Imports:
     network,
     digest,
     arrangements,
-    purrr
+    purrr,
+    Rcpp
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo
