@@ -6,20 +6,16 @@ using namespace std;
 
 // [[Rcpp::export]]
 bool cloteaux(arma::ivec a, bool sorted){
+  if(any(a < 0)){
+    return false;
+  }
+
   if(!sorted){
     a = sort(a, "descend");
   }
   int n = a.size();
   int zero_loc = n;
   int i = 0;
-
-  if(a[n-1] < 0){
-    return false;
-  }
-
-  if(a[0] == 0){
-    return true;
-  }
 
   bool condition = true;
 
@@ -39,10 +35,6 @@ bool cloteaux(arma::ivec a, bool sorted){
   int a1 = b[0];
   int an = b[n-1];
   int s = arma::sum(b);
-
-  if(an < 0){
-    return false;
-  }
 
   if(a1 > n - 1){
     return false;
@@ -92,15 +84,14 @@ double number_of_graphs_cpp(
     bool sorted
 ) {
 
-  arma::ivec input_sorted = sort(input, "descend");
-  int n = input_sorted.size();
-  if(input_sorted[0] == 0){
-    if(input_sorted[n-1] == 0){
-      return 0;
-    }
-  }
+  input = sort(input, "descend");
 
-  bool graphical = cloteaux(input_sorted, true);
+  if(input.is_zero()){
+    return 0;
+  }
+  int n = input.size();
+
+  bool graphical = cloteaux(input, true);
 
   double negative_infinity = -arma::datum::inf;
 
@@ -122,14 +113,39 @@ double number_of_graphs_cpp(
         mud * log(mud) +
         (1 - mud)*log(1 - mud)
     );
-  output += Rcpp::sum(Rcpp::lchoose(n - 1, y));
+
+  // output += Rcpp::sum(Rcpp::lchoose(n - 1, y));
+
 
   Rcpp::IntegerVector table_x = Rcpp::table(y);
-  double stable_x = Rcpp::sum(table_x);
-  Rcpp::NumericVector stable_x2 = Rcpp::NumericVector::create(stable_x);
-  stable_x2[0] = stable_x;
-  output += Rcpp::sum(Rcpp::lfactorial(stable_x2));
-  output += -Rcpp::sum(Rcpp::lfactorial(table_x));
+  Rcpp::NumericVector table_x2 = Rcpp::as<Rcpp::NumericVector>(table_x);
+
+  arma::vec values_x = arma::unique(x);
+  arma::vec values_y = arma::conv_to<arma::vec>::from(values_x);
+  Rcpp::NumericVector values_y2 = Rcpp::wrap(values_y);
+
+  //output += Rcpp::sum(table_x2 * values_y2);
+
+  arma::vec a0(Rcpp::as<arma::vec>(table_x));
+
+  Rcpp::NumericVector a1_r = Rcpp::lchoose(n - 1, values_y2);
+  arma::vec a1(Rcpp::as<arma::vec>(a1_r));
+
+  double arma_input = arma::dot(a0,a1);
+  output += arma_input;
+
+  // Rcpp::NumericVector sum_input = table_x2 * Rcpp::lchoose(n - 1, values_y2);
+  // output += Rcpp::sum(sum_input);
+
+  // Rcpp::Rcout << repeats_2;
+  // Rcpp::Rcout << values_y2;
+  // Rcpp::Rcout << unique_2;
+
+
+  // Rcpp::NumericVector stable_x2 = Rcpp::NumericVector::create(stable_x);
+  // stable_x2[0] = stable_x;
+  // output += Rcpp::sum(Rcpp::lfactorial(stable_x2));
+  // output += -Rcpp::sum(Rcpp::lfactorial(table_x));
 
   return output;
 }
@@ -196,15 +212,13 @@ Rcpp::List ergm_simulator_cpp(
   double acceptance_prob;
 
   for(int i = 0; i < loops; ++i){
-    s_init = sum_sim(x);
+    s_init = sum_stat(x);
     x_star = proposal(x);
-    s_star = sum_sim(x_star);
+    s_star = sum_stat(x_star);
 
     acceptance_prob = number_of_graphs_cpp(x_star, false) -
       number_of_graphs_cpp(x, false) +
       s_star * theta - s_init * theta;
-
-    //number_of_graphs_cpp(x, false) + s_star * theta - s_init * theta;
 
     a0 = Rcpp::rbinom(1, 1, std::min(1.0, std::exp(acceptance_prob)));
     a1 = a0[0];
