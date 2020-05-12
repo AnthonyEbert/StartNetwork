@@ -1,5 +1,4 @@
 #include <RcppArmadillo.h>
-#include <bits/stdc++.h>
 using namespace std;
 
 // cloteaux2018sufficient A sufficient condition for graphic sequences with given largest and smallest entries, length and sum

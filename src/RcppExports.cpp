@@ -65,17 +65,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// graphExists
-bool graphExists(std::vector<int> a);
-RcppExport SEXP _StartNetwork_graphExists(SEXP aSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<int> >::type a(aSEXP);
-    rcpp_result_gen = Rcpp::wrap(graphExists(a));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_StartNetwork_cloteaux", (DL_FUNC) &_StartNetwork_cloteaux, 2},
@@ -83,7 +72,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_StartNetwork_sum_sim", (DL_FUNC) &_StartNetwork_sum_sim, 1},
     {"_StartNetwork_proposal_sim", (DL_FUNC) &_StartNetwork_proposal_sim, 1},
     {"_StartNetwork_ergm_simulator_cpp", (DL_FUNC) &_StartNetwork_ergm_simulator_cpp, 3},
-    {"_StartNetwork_graphExists", (DL_FUNC) &_StartNetwork_graphExists, 1},
     {NULL, NULL, 0}
 };
 

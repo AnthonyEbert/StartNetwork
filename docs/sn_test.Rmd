@@ -43,6 +43,14 @@ len_x <- length(sn_test)
 hist(ergm_test, breaks = 0:20, freq = FALSE)
 hist(sn_test[seq(1, len_x, by = 10)], breaks = 0:20, col = "red", add = TRUE, freq = FALSE)
 
+results_df <- data.frame(
+  label = c(
+    rep("ergm package", length(ergm_test)),
+    rep("mcmc", length(sn_test0))
+  ), 
+  value = c(ergm_test, sn_test0)
+)
+
 # plot(density(ergm_test))
 # lines(density(sn_test[seq(1, len_x, by = 10)]), col = "red")
 ```

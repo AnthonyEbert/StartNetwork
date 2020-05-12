@@ -21,7 +21,3 @@ ergm_simulator_cpp <- function(init, loops, theta) {
     .Call(`_StartNetwork_ergm_simulator_cpp`, init, loops, theta)
 }
 
-graphExists <- function(a) {
-    .Call(`_StartNetwork_graphExists`, a)
-}
-
