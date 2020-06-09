@@ -28,6 +28,10 @@ vertex4 <- tibble::tibble(
     6,
     1
   )
-) %>% rowwise %>% mutate(digest = digest::digest(degseqx)) %>% select(-degseqx)
+) %>%
+  rowwise %>%
+  mutate(digest = digest::digest(degseqx)) %>%
+  mutate(permutations = arrangements::npermutations(k = 4, freq = as.numeric(table(degseqx)))) %>%
+  select(-degseqx)
 
 usethis::use_data(vertex4, overwrite = TRUE)

@@ -45,7 +45,7 @@ ldouble_factorial <- function(n){
 }
 
 #' @export
-number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, mirror = FALSE, type = "Bianconi"){
+number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, mirror = FALSE, type = "Bianconi", flipped = FALSE){
 
   if(!igraph::is_graphical(x)){
     return(rep(-Inf, length(type)))
@@ -87,7 +87,7 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, mirror = FALSE, t
   if("Exact" %in% type){
     stopifnot(length(x) == 4)
     sort_x <- sort(x)
-    output <- StartNetwork::vertex4 %>% dplyr::filter(digest == digest::digest(sort_x)) %>% dplyr::pull(combinations)
+    output <- StartNetwork::vertex4 %>% dplyr::ungroup() %>% dplyr::filter(digest == digest::digest(sort_x)) %>% dplyr::pull(combinations)
     sorted <- FALSE
     if(length(output) == 0){output = 0}
     output <- log(output)
@@ -95,6 +95,9 @@ number_of_graphs_dd <- function(x, sorted = TRUE, bigz = TRUE, mirror = FALSE, t
 
   if(sorted){
     size_factor <- arrangements::npermutations(k = length(x), freq = as.numeric(table(x)), bigz = bigz)
+    if(flipped){
+      size_factor <- -1 * size_factor
+    }
     output <- output + gmp::log.bigz(size_factor)
   }
 

@@ -33,7 +33,7 @@ ergm_test <- summary(ergm_test0 ~ gwdegree(2, fixed = TRUE))
 #ergm_test <- as.numeric(ergm_test0)
 
 input = lapply(ergm_test0[1:nc], degseq_extract)
-sn_test0 <- parallel::parSapply(cl, input, ergm_simulator, sum_stat = StartNetwork::gwdegree, loops = nsim_new, theta = coef_up, alpha = 2, simplify = TRUE, type = "Exact")
+sn_test0 <- parallel::parSapply(cl, input, ergm_simulator, sum_stat = StartNetwork::gwdegree, loops = nsim_new, theta = coef_up, alpha = 2, type = "Exact")
 
 # sn_test <- ergm_simulator(sn_init, Sgwdegree , 5000, 3, alpha = 2)
 

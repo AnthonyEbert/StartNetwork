@@ -228,6 +228,11 @@ Rcpp::List ergm_simulator_cpp(
       s_init = s_star;
     }
 
+    if( i % 512 == 0 )
+    {
+      Rcpp::checkUserInterrupt();
+    }
+
     accepted_mat.col(i) = x;
     accepted(i) = s_init;
   }
